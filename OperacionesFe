@@ -6,12 +6,12 @@ static class Program
 {
     // =================================================================
     // DECLARACIÓN GLOBAL DE CONTROLES
+    // La matriz (DataGridView) y sus componentes de entrada/salida.
     // =================================================================
     private static DataGridView dgvMatriz;           
     private static TextBox txtFila, txtColumna, txtValor; 
     private static ListBox lbRecorrido;               
-    private static Button btnInicializar3x4, btnAsignar, btnBorrar, btnBuscar, btnRecorrer; 
-    private static Button btnInicializar2x3;         // Botón 7: Inicializar 2x3.
+    private static Button btnInicializar, btnAsignar, btnBorrar, btnBuscar, btnRecorrer; 
 
     // =================================================================
     // FUNCIÓN PRINCIPAL: Main() (Constructor del Formulario)
@@ -23,9 +23,9 @@ static class Program
         Application.SetCompatibleTextRenderingDefault(false);
 
         Form form = new Form();
-        form.Text = "Operaciones con Matrices (Diapositiva #8)";
+        form.Text = "Operaciones con Matrices (Tamaño Dinámico)";
         form.StartPosition = FormStartPosition.CenterScreen;
-        form.ClientSize = new Size(650, 500); // Tamaño reducido ya sin la línea de suma
+        form.ClientSize = new Size(650, 500); 
 
         // ----------------- Controles de Datos y Matriz -----------------
         dgvMatriz = new DataGridView() {
@@ -36,7 +36,7 @@ static class Program
         };
         form.Controls.Add(dgvMatriz);
 
-        // TextBoxes y Etiquetas
+        // TextBoxes y Etiquetas (Usados para Inicializar y Operaciones)
         txtFila = new TextBox() { Location = new Point(480, 20), Size = new Size(50, 20) };
         txtColumna = new TextBox() { Location = new Point(540, 20), Size = new Size(50, 20) };
         txtValor = new TextBox() { Location = new Point(480, 60), Size = new Size(110, 20) };
@@ -52,58 +52,82 @@ static class Program
         lbRecorrido = new ListBox() { Location = new Point(20, 280), Size = new Size(610, 200) };
         form.Controls.Add(lbRecorrido);
 
-        // ----------------- Creación y Posicionamiento de Botones -----------------
-        int y_pos_fila1 = 180; // Fila para operaciones de elemento
-        int y_pos_fila2 = 220; // Fila para operaciones de matriz completa
-
-        // FILA 1: Operaciones básicas de elemento
-        btnInicializar3x4 = new Button() { Text = "1. Inicializar (3x4)", Location = new Point(20, y_pos_fila1), Size = new Size(120, 30) };
-        btnAsignar = new Button() { Text = "2/4. Asignar/Actualizar", Location = new Point(145, y_pos_fila1), Size = new Size(150, 30) };
-        btnBorrar = new Button() { Text = "3. Borrar (Vacío)", Location = new Point(300, y_pos_fila1), Size = new Size(100, 30) };
-        btnBuscar = new Button() { Text = "5. Buscar", Location = new Point(405, y_pos_fila1), Size = new Size(185, 30) };
+        // **BOTÓN DE INICIALIZACIÓN DINÁMICA**
+        btnInicializar = new Button() { Text = "1. Inicializar Matriz (Leer Fila/Col)", Location = new Point(400, 100), Size = new Size(190, 30) };
+        form.Controls.Add(btnInicializar);
         
-        form.Controls.Add(btnInicializar3x4);
+        // ----------------- Creación y Posicionamiento de Botones (Operaciones) -----------------
+        int y_pos_fila = 180; 
+
+        // FILA ÚNICA: Operaciones 2 a 6
+        btnAsignar = new Button() { Text = "2/4. Asignar/Actualizar", Location = new Point(20, y_pos_fila), Size = new Size(150, 30) };
+        btnBorrar = new Button() { Text = "3. Borrar (Vacío)", Location = new Point(175, y_pos_fila), Size = new Size(100, 30) };
+        btnBuscar = new Button() { Text = "5. Buscar", Location = new Point(280, y_pos_fila), Size = new Size(100, 30) };
+        btnRecorrer = new Button() { Text = "6. Recorrer y Mostrar", Location = new Point(385, y_pos_fila), Size = new Size(225, 30) };
+        
         form.Controls.Add(btnAsignar);
         form.Controls.Add(btnBorrar);
         form.Controls.Add(btnBuscar);
-
-        // FILA 2: Operaciones de matriz completa
-        btnRecorrer = new Button() { Text = "6. Recorrer y Mostrar", Location = new Point(20, y_pos_fila2), Size = new Size(280, 30) };
-        btnInicializar2x3 = new Button() { Text = "7. Inicializar (2x3)", Location = new Point(310, y_pos_fila2), Size = new Size(280, 30) }; // ÚNICA OPERACIÓN EXTRA
-        
         form.Controls.Add(btnRecorrer);
-        form.Controls.Add(btnInicializar2x3);
 
         // ----------------- Vinculación de Eventos -----------------
         InicializarMatriz(3, 4); // Inicializa matriz 3x4 por defecto al iniciar
 
-        btnInicializar3x4.Click += (s, e) => InicializarMatriz(3, 4); 
+        // VINCULACIÓN DINÁMICA
+        btnInicializar.Click += btnInicializar_Click; 
+        
+        // VINCULACIÓN DE OPERACIONES BÁSICAS
         btnAsignar.Click += btnAsignar_Click;
         btnBorrar.Click += btnBorrar_Click;
         btnBuscar.Click += btnBuscar_Click;
         btnRecorrer.Click += btnRecorrer_Click;
         
-        // VINCULACIÓN DE LA NUEVA OPERACIÓN
-        btnInicializar2x3.Click += (s, e) => InicializarMatriz(2, 3); 
-
         Application.Run(form);
     }
 
     // =================================================================
-    // OPERACIÓN 1 Y 7: InicializarMatriz (Redimensionamiento)
+    // FUNCIÓN 1: Inicializar Matriz (DINÁMICA - Lógica del botón)
     // =================================================================
+    private static void btnInicializar_Click(object sender, EventArgs e)
+    {
+        // 1. Lectura y validación de entrada
+        if (!int.TryParse(txtFila.Text, out int filas) || !int.TryParse(txtColumna.Text, out int columnas))
+        {
+            MessageBox.Show("¡ERROR! Ingrese números enteros válidos en Fila y Columna para inicializar la matriz.");
+            return;
+        }
+
+        // 2. Validación de dimensiones positivas
+        if (filas <= 0 || columnas <= 0)
+        {
+            MessageBox.Show("¡ERROR! Las dimensiones de la matriz deben ser mayores a cero.");
+            return;
+        }
+
+        // 3. Llama a la función que realiza el redimensionamiento
+        InicializarMatriz(filas, columnas); 
+
+        MessageBox.Show($"Matriz inicializada correctamente con {filas} filas y {columnas} columnas.");
+    }
+    
+    // -----------------------------------------------------------------
+    // FUNCIÓN AUXILIAR: InicializarMatriz (Lógica de Redimensionamiento)
+    // -----------------------------------------------------------------
     private static void InicializarMatriz(int filas, int columnas)
     {
         dgvMatriz.Rows.Clear();    
         dgvMatriz.Columns.Clear(); 
         
+        // Agrega las columnas
         for (int j = 0; j < columnas; j++)
         {
             dgvMatriz.Columns.Add("Col" + j, j.ToString()); 
         }
 
+        // Agrega las filas
         dgvMatriz.Rows.Add(filas);
         
+        // Establece los encabezados de fila
         for (int i = 0; i < filas; i++)
         {
             dgvMatriz.Rows[i].HeaderCell.Value = i.ToString();
@@ -131,6 +155,7 @@ static class Program
 
         if (fila >= 0 && fila < dgvMatriz.RowCount && col >= 0 && col < dgvMatriz.ColumnCount)
         {
+            // Asigna el valor en la posición [fila, col]
             dgvMatriz.Rows[fila].Cells[col].Value = valor; 
             MessageBox.Show($"Valor '{valor}' asignado/actualizado en la posición [{fila},{col}].");
         }
@@ -153,6 +178,7 @@ static class Program
 
         if (fila >= 0 && fila < dgvMatriz.RowCount && col >= 0 && col < dgvMatriz.ColumnCount)
         {
+            // Borra al asignar 'null'
             dgvMatriz.Rows[fila].Cells[col].Value = null; 
             MessageBox.Show($"Elemento borrado (celda vacía) en [{fila},{col}].");
         }
@@ -175,15 +201,16 @@ static class Program
         }
 
         int count = 0;
+        // Reinicia colores y busca el elemento
         foreach (DataGridViewRow row in dgvMatriz.Rows)
         {
             foreach (DataGridViewCell cell in row.Cells)
             {
-                cell.Style.BackColor = dgvMatriz.DefaultCellStyle.BackColor; 
+                cell.Style.BackColor = dgvMatriz.DefaultCellStyle.BackColor; // Limpia resaltado
 
                 if (cell.Value != null && cell.Value.ToString() == valorBuscado)
                 {
-                    cell.Style.BackColor = Color.Yellow; 
+                    cell.Style.BackColor = Color.Yellow; // Resalta
                     count++;
                 }
             }
@@ -210,13 +237,14 @@ static class Program
         int filas = dgvMatriz.RowCount;
         int columnas = dgvMatriz.ColumnCount;
 
-        for (int i = 0; i < filas; i++) 
+        for (int i = 0; i < filas; i++) // Bucle exterior (Filas)
         {
             string filaString = $"Fila {i}: [ ";
-            for (int j = 0; j < columnas; j++) 
+            for (int j = 0; j < columnas; j++) // Bucle interior (Columnas)
             {
                 object cellValue = dgvMatriz.Rows[i].Cells[j].Value;
                 
+                // Concatena el valor, o "vacio" si la celda no tiene contenido.
                 string valor = (cellValue != null && !string.IsNullOrEmpty(cellValue.ToString())) ? cellValue.ToString() : "vacio";
                 
                 filaString += valor;
