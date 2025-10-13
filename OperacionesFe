@@ -1,0 +1,218 @@
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Globalization;
+using System.Linq;
+
+static class Program
+{
+    // Variables estáticas para los controles
+    private static DataGridView dgvMatriz;
+    private static TextBox txtFila, txtColumna, txtValor;
+    private static ListBox lbRecorrido;
+    private static Button btnInicializar, btnAsignar, btnBorrar, btnBuscar, btnRecorrer;
+
+    [STAThread]
+    static void Main()
+    {
+        Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
+
+        Form form = new Form();
+        form.Text = "Operaciones con Matrices (Diapositiva #8)";
+        form.StartPosition = FormStartPosition.CenterScreen;
+        form.ClientSize = new Size(600, 500);
+
+        // =================================================================
+        // CREACIÓN Y POSICIONAMIENTO DE CONTROLES
+        // =================================================================
+
+        // DataGridView para la matriz
+        dgvMatriz = new DataGridView() {
+            Location = new Point(20, 20),
+            Size = new Size(300, 150),
+            AllowUserToAddRows = false,
+            RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToFirstHeader,
+            AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+        };
+        form.Controls.Add(dgvMatriz);
+
+        // TextBoxes para Fila, Columna, Valor
+        txtFila = new TextBox() { Location = new Point(450, 20), Size = new Size(50, 20) };
+        txtColumna = new TextBox() { Location = new Point(510, 20), Size = new Size(50, 20) };
+        txtValor = new TextBox() { Location = new Point(450, 60), Size = new Size(110, 20) };
+
+        form.Controls.Add(new Label() { Text = "Fila", Location = new Point(450, 5), AutoSize = true });
+        form.Controls.Add(new Label() { Text = "Col", Location = new Point(510, 5), AutoSize = true });
+        form.Controls.Add(new Label() { Text = "Valor", Location = new Point(410, 63), AutoSize = true });
+        form.Controls.Add(txtFila);
+        form.Controls.Add(txtColumna);
+        form.Controls.Add(txtValor);
+        
+        // ListBox para Recorrido
+        lbRecorrido = new ListBox() { Location = new Point(20, 350), Size = new Size(560, 100) };
+        form.Controls.Add(lbRecorrido);
+
+        // Botones de Operación
+        int y_pos = 180;
+        
+        btnInicializar = new Button() { Text = "1. Inicializar (3x4)", Location = new Point(20, y_pos), Size = new Size(120, 30) };
+        btnAsignar = new Button() { Text = "2/4. Asignar/Actualizar", Location = new Point(145, y_pos), Size = new Size(150, 30) };
+        btnBorrar = new Button() { Text = "3. Borrar (Vacío)", Location = new Point(300, y_pos), Size = new Size(120, 30) };
+        btnBuscar = new Button() { Text = "5. Buscar", Location = new Point(425, y_pos), Size = new Size(150, 30) };
+        btnRecorrer = new Button() { Text = "6. Recorrer y Mostrar", Location = new Point(20, y_pos + 40), Size = new Size(555, 30) };
+        
+        form.Controls.Add(btnInicializar);
+        form.Controls.Add(btnAsignar);
+        form.Controls.Add(btnBorrar);
+        form.Controls.Add(btnBuscar);
+        form.Controls.Add(btnRecorrer);
+
+        // =================================================================
+        // VINCULACIÓN DE EVENTOS Y LÓGICA DE LAS 6 OPERACIONES
+        // =================================================================
+        
+        // ** CAMBIO **: Inicializa la matriz como 2x3 pero VACÍA.
+        InicializarMatriz(2, 3); 
+
+        // Vinculación de funciones a botones
+        btnInicializar.Click += (s, e) => InicializarMatriz(3, 4); 
+        btnAsignar.Click += btnAsignar_Click;
+        btnBorrar.Click += btnBorrar_Click;
+        btnBuscar.Click += btnBuscar_Click;
+        btnRecorrer.Click += btnRecorrer_Click;
+
+        Application.Run(form);
+    }
+
+    private static void InicializarMatriz(int filas, int columnas)
+    {
+        dgvMatriz.Rows.Clear();
+        dgvMatriz.Columns.Clear();
+        
+        for (int j = 0; j < columnas; j++)
+        {
+            dgvMatriz.Columns.Add("Col" + j, j.ToString());
+        }
+
+        dgvMatriz.Rows.Add(filas);
+        for (int i = 0; i < filas; i++)
+        {
+            dgvMatriz.Rows[i].HeaderCell.Value = i.ToString();
+        }
+        
+        // ** ELIMINADO **: Bloque que cargaba valores iniciales. La matriz queda vacía.
+    }
+
+    private static void btnAsignar_Click(object sender, EventArgs e)
+    {
+        if (!int.TryParse(txtFila.Text, out int fila) || !int.TryParse(txtColumna.Text, out int col))
+        {
+            MessageBox.Show("Ingrese números enteros válidos para Fila y Columna.");
+            return;
+        }
+
+        string valor = txtValor.Text;
+        
+        // Validación: El valor debe ser numérico (permite negativos y decimales) o estar vacío
+        if (!string.IsNullOrEmpty(valor) && !double.TryParse(valor, out double tempVal))
+        {
+             MessageBox.Show("El valor a asignar debe ser numérico.");
+             return;
+        }
+
+        if (fila >= 0 && fila < dgvMatriz.RowCount && col >= 0 && col < dgvMatriz.ColumnCount)
+        {
+            dgvMatriz.Rows[fila].Cells[col].Value = valor;
+            MessageBox.Show($"Valor '{valor}' asignado/actualizado en la posición [{fila},{col}].");
+        }
+        else
+        {
+            MessageBox.Show("Índices de fila o columna fuera de rango.");
+        }
+    }
+
+    private static void btnBorrar_Click(object sender, EventArgs e)
+    {
+        if (!int.TryParse(txtFila.Text, out int fila) || !int.TryParse(txtColumna.Text, out int col))
+        {
+            MessageBox.Show("Ingrese números enteros válidos para Fila y Columna.");
+            return;
+        }
+
+        if (fila >= 0 && fila < dgvMatriz.RowCount && col >= 0 && col < dgvMatriz.ColumnCount)
+        {
+            // Borrar: Asignamos 'null' para que la celda se vea completamente vacía.
+            dgvMatriz.Rows[fila].Cells[col].Value = null; 
+            MessageBox.Show($"Elemento borrado (celda vacía) en [{fila},{col}].");
+        }
+        else
+        {
+            MessageBox.Show("Índices de fila o columna fuera de rango.");
+        }
+    }
+
+    private static void btnBuscar_Click(object sender, EventArgs e)
+    {
+        string valorBuscado = txtValor.Text.Trim();
+        if (string.IsNullOrEmpty(valorBuscado))
+        {
+            MessageBox.Show("Ingrese un valor a buscar en el campo 'Valor'.");
+            return;
+        }
+
+        int count = 0;
+        foreach (DataGridViewRow row in dgvMatriz.Rows)
+        {
+            foreach (DataGridViewCell cell in row.Cells)
+            {
+                // Limpia el color de fondo de la celda antes de buscar.
+                cell.Style.BackColor = dgvMatriz.DefaultCellStyle.BackColor; 
+
+                // Compara el valor.
+                if (cell.Value != null && cell.Value.ToString() == valorBuscado)
+                {
+                    cell.Style.BackColor = Color.Yellow; // Resalta la celda encontrada.
+                    count++;
+                }
+            }
+        }
+
+        if (count > 0)
+        {
+            MessageBox.Show($"Se encontraron {count} ocurrencia(s) del valor '{valorBuscado}'. Las celdas se han resaltado.");
+        }
+        else
+        {
+            MessageBox.Show($"El valor '{valorBuscado}' no se encontró en la matriz.");
+        }
+    }
+
+    private static void btnRecorrer_Click(object sender, EventArgs e)
+    {
+        lbRecorrido.Items.Clear();
+        lbRecorrido.Items.Add("Recorrido de la Matriz (Fila por Fila):");
+        
+        int filas = dgvMatriz.RowCount;
+        int columnas = dgvMatriz.ColumnCount;
+
+        for (int i = 0; i < filas; i++) 
+        {
+            string filaString = $"Fila {i}: [ ";
+            for (int j = 0; j < columnas; j++) 
+            {
+                object cellValue = dgvMatriz.Rows[i].Cells[j].Value;
+                // Muestra el valor o "vacio" si la celda es null/string.Empty.
+                string valor = (cellValue != null && !string.IsNullOrEmpty(cellValue.ToString())) ? cellValue.ToString() : "vacio";
+                
+                filaString += valor;
+                if (j < columnas - 1)
+                {
+                    filaString += ", ";
+                }
+            }
+            filaString += " ]";
+            lbRecorrido.Items.Add(filaString);
+        }
+    }
+}
