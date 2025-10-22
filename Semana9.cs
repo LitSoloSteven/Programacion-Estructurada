@@ -45,7 +45,7 @@ namespace GestorEmpleados
         public Gestor_Formulario_Principal()
         {
             // Configuramos las propiedades básicas de la ventana.
-            this.Text = "Gestor de Empleados"; // Título de la ventana
+            this.Text = "Semana9-ProgramacionEstructurada"; // Título de la ventana
             this.Size = new Size(600, 480);     // Tamaño inicial
             this.MinimumSize = new Size(600, 480); // Tamaño mínimo
             this.StartPosition = FormStartPosition.CenterScreen; // Aparece en el centro
@@ -391,5 +391,6 @@ namespace GestorEmpleados
     }
 
 }
+
 
 
