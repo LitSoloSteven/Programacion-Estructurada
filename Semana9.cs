@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-namespace GestorEmpleadosWinForms
+namespace GestorEmpleados
 {
     // Esta es la clase principal de nuestro formulario (la ventana).
     public class Gestor_Formulario_Principal : Form
@@ -391,4 +391,5 @@ namespace GestorEmpleadosWinForms
     }
 
 }
+
 
