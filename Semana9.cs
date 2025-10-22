@@ -284,7 +284,6 @@ namespace GestorEmpleados
                     }
                 }
 
-                //  Aquí está la lógica que reemplaza la "clase de extensión" 
                 // Para cada campo, comprobamos si la clave existe en el diccionario.
                 // Si existe, usamos su valor. Si no, usamos un valor por defecto (ej. texto vacío).
                 // Esto evita que el programa se cierre si un archivo está incompleto.
@@ -391,6 +390,7 @@ namespace GestorEmpleados
     }
 
 }
+
 
 
 
