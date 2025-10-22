@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
 
-// Definimos el espacio de nombres para organizar nuestro código.
+
 namespace GestorEmpleadosWinForms
 {
     // Esta es la clase principal de nuestro formulario (la ventana).
@@ -15,7 +15,6 @@ namespace GestorEmpleadosWinForms
     {
         //  Declaración de todos los Controles Visuales
         // Aquí declaramos cada botón, campo de texto, etc., que usaremos en la ventana.
-        // Les damos nombres descriptivos para saber qué hace cada uno.
 
         // Sección para seleccionar la carpeta
         private TextBox Campo_Texto_Ruta_Carpeta;
@@ -391,4 +390,5 @@ namespace GestorEmpleadosWinForms
             Application.Run(new Gestor_Formulario_Principal());
         }
     }
+
 }
