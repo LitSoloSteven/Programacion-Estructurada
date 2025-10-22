@@ -1,4 +1,3 @@
-// Usamos estas "librerías" de .NET para poder crear ventanas, manejar archivos, etc.
 using System;
 using System.Drawing;
 using System.Globalization;
@@ -392,3 +391,4 @@ namespace GestorEmpleadosWinForms
     }
 
 }
+
