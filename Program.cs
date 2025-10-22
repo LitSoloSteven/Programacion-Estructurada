@@ -1,4 +1,3 @@
-// "Librerías" necesarias para crear la ventana, manejar archivos y datos.
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -10,7 +9,7 @@ using System.Windows.Forms;
 // Espacio de nombres para organizar el código de esta aplicación.
 namespace AnalizadorDeRegistros
 {
-    // --- Estructura para almacenar los datos de un empleado ---
+    // Estructura para almacenar los datos de un empleado 
     // Usamos una 'struct' porque es una forma simple y eficiente de agrupar
     // varias variables relacionadas (nombre, edad, etc.) en un solo paquete.
     public struct Empleado
@@ -21,10 +20,10 @@ namespace AnalizadorDeRegistros
         public char Sexo { get; set; }
     }
 
-    // --- Clase principal de nuestro formulario (la ventana) ---
+    // Clase principal de nuestro formulario (la ventana)
     public class Analizador_Formulario_Principal : Form
     {
-        // --- Declaración de todos los Controles Visuales ---
+        //  Declaración de todos los Controles Visuales
         private Button Boton_Seleccionar_Carpeta;
         private TextBox Campo_Texto_Ruta_Carpeta;
         
@@ -48,7 +47,7 @@ namespace AnalizadorDeRegistros
             this.StartPosition = FormStartPosition.CenterScreen;
             this.Font = new Font("Segoe UI", 9F);
 
-            // ** CAMBIO IMPORTANTE **
+
             // Usamos la cultura "en-US" para poder LEER correctamente el formato de moneda ($) de los archivos generados por el otro programa.
             CultureInfo.CurrentCulture = new CultureInfo("en-US", false);
             
@@ -56,10 +55,10 @@ namespace AnalizadorDeRegistros
             Inicializar_Componentes_Visuales();
         }
 
-        // --- Creación de la Interfaz Gráfica ---
+        // -Creación de la Interfaz Gráfica
         private void Inicializar_Componentes_Visuales()
         {
-            // --- 1. Sección superior para seleccionar la carpeta ---
+            //  Sección superior para seleccionar la carpeta 
             var panelSuperior = new Panel { Dock = DockStyle.Top, Height = 50, Padding = new Padding(10) };
             
             Boton_Seleccionar_Carpeta = new Button { Text = "Seleccionar Carpeta con Registros", Dock = DockStyle.Left, Width = 220 };
@@ -70,7 +69,7 @@ namespace AnalizadorDeRegistros
             panelSuperior.Controls.Add(Campo_Texto_Ruta_Carpeta);
             panelSuperior.Controls.Add(Boton_Seleccionar_Carpeta);
             
-            // --- 2. Panel inferior para mostrar las estadísticas ---
+            //  Panel inferior para mostrar las estadísticas 
             var panelInferior = new GroupBox { Text = "Estadísticas Generales", Dock = DockStyle.Bottom, Height = 80, Padding = new Padding(10) };
             
             Etiqueta_Promedio_Edad = new Label { Text = "Promedio de Edad: -", Location = new Point(20, 30), AutoSize = true, Font = new Font(this.Font, FontStyle.Bold) };
@@ -83,7 +82,7 @@ namespace AnalizadorDeRegistros
             panelInferior.Controls.Add(Etiqueta_Conteo_Hombres);
             panelInferior.Controls.Add(Etiqueta_Conteo_Mujeres);
             
-            // --- 3. Tabla (Grid) para mostrar los datos de los empleados ---
+            // Tabla (Grid) para mostrar los datos de los empleados
             Tabla_Resultados_Empleados = new DataGridView
             {
                 Dock = DockStyle.Fill, // Le decimos que ocupe todo el espacio sobrante.
@@ -95,7 +94,7 @@ namespace AnalizadorDeRegistros
                 BorderStyle = BorderStyle.Fixed3D
             };
 
-            // --- 4. **CORRECCIÓN IMPORTANTE**: Añadimos los controles a la ventana en el orden correcto ---
+            //  Añadimos los controles a la ventana en el orden correcto ---
             // El control que se "llena" (Fill) se debe añadir antes que los paneles superior e inferior
             // para que estos se posicionen correctamente a su alrededor y no lo tapen.
             this.Controls.Add(this.Tabla_Resultados_Empleados);
@@ -103,7 +102,7 @@ namespace AnalizadorDeRegistros
             this.Controls.Add(panelSuperior);
         }
 
-        // --- Lógica de los Eventos ---
+        // Lógica de los Eventos
 
         // Se ejecuta cuando el usuario hace clic en el botón para seleccionar una carpeta.
         private void Al_Hacer_Clic_En_Boton_Seleccionar_Carpeta(object sender, EventArgs e)
@@ -123,12 +122,12 @@ namespace AnalizadorDeRegistros
             }
         }
 
-        // --- Funciones de Ayuda (Lógica principal del programa) ---
+        //  Funciones de Ayuda (Lógica principal del programa)
 
         // Esta es la función más importante: lee los archivos, calcula y muestra los resultados.
         private void Procesar_Archivos_De_La_Carpeta(string rutaCarpeta)
         {
-            // 1. Buscamos todos los archivos que terminen en .txt dentro de la carpeta.
+            //  Buscamos todos los archivos que terminen en .txt dentro de la carpeta.
             string[] rutasDeArchivos = Directory.GetFiles(rutaCarpeta, "*.txt");
             
             // Si no encontramos archivos, mostramos un mensaje y terminamos.
@@ -144,10 +143,10 @@ namespace AnalizadorDeRegistros
                 return;
             }
 
-            // 2. Creamos una lista para guardar los datos de todos los empleados que encontremos.
+            //  Creamos una lista para guardar los datos de todos los empleados que encontremos.
             var listaDeEmpleados = new List<Empleado>();
 
-            // 3. Recorremos cada archivo encontrado.
+            //  Recorremos cada archivo encontrado.
             foreach (string rutaArchivo in rutasDeArchivos)
             {
                 try
@@ -195,7 +194,7 @@ namespace AnalizadorDeRegistros
                 }
             }
             
-            // 4. Si después de procesar todo, la lista tiene empleados, calculamos las estadísticas.
+            // Si después de procesar todo, la lista tiene empleados, calculamos las estadísticas.
             if (listaDeEmpleados.Any())
             {
                 // Mostramos los datos en la tabla.
@@ -208,10 +207,9 @@ namespace AnalizadorDeRegistros
                 int conteoHombres = listaDeEmpleados.Count(emp => emp.Sexo == 'M');
                 int conteoMujeres = listaDeEmpleados.Count(emp => emp.Sexo == 'F');
 
-                // 5. Mostramos los resultados en las etiquetas.
+                //  Mostramos los resultados en las etiquetas.
                 Etiqueta_Promedio_Edad.Text = $"Promedio de Edad: {promedioEdad:F1} años"; // F1 significa 1 decimal.
                 
-                // ** CAMBIO IMPORTANTE **
                 // Para mostrar el salario en Córdobas (C$), creamos un objeto de cultura para Nicaragua.
                 var culturaNicaragua = new CultureInfo("es-NI");
                 Etiqueta_Promedio_Salario.Text = $"Promedio de Salario: {promedioSalario.ToString("C", culturaNicaragua)}"; 
@@ -221,7 +219,7 @@ namespace AnalizadorDeRegistros
             }
         }
         
-        // --- Punto de Entrada de la Aplicación ---
+        // Punto de Entrada de la Aplicación
         [STAThread]
         static void Main()
         {
@@ -231,4 +229,5 @@ namespace AnalizadorDeRegistros
             Application.Run(new Analizador_Formulario_Principal());
         }
     }
+
 }
