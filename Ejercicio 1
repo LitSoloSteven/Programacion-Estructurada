@@ -1,0 +1,118 @@
+using System;
+using System.Collections.Generic; // para usar la clase Stack
+
+namespace PilaEnteros
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // Creamos la pila para guardar números enteros
+            Stack<int> pila = new Stack<int>();
+            int opcion = 0;
+            bool continuar = true;
+
+            // Bucle principal del programa
+            while (continuar)
+            {
+                Console.WriteLine(" Menú de pila de enteros ");
+                Console.WriteLine("1. Agregar número(s) (push)");
+                Console.WriteLine("2. Mostrar pila");
+                Console.WriteLine("3. Eliminar número (pop)");
+                Console.WriteLine("4. Salir");
+                Console.Write("Elige una opción: ");
+
+                // Validar que la opción sea un número
+                if (!int.TryParse(Console.ReadLine(), out opcion))
+                {
+                    Console.WriteLine("Por favor escribe un número válido.\n");
+                    continue;
+                }
+
+                switch (opcion)
+                {
+                    case 1:
+                        // Agregar varios números seguidos
+                        Console.WriteLine("\n Agrega números a la pila.");
+                        Console.WriteLine("Escribe 'x' para volver al menú principal.\n");
+
+                        while (true)
+                        {
+                            Console.Write("Número (o 'x' para salir): ");
+                            string entrada = Console.ReadLine();
+
+                            // Si el usuario quiere salir del modo agregar
+                            if (entrada.ToLower() == "x")
+                            {
+                                Console.WriteLine("Saliendo del modo agregar...\n");
+                                break;
+                            }
+
+                            // Intentar convertir a número
+                            int numero;
+                            if (int.TryParse(entrada, out numero))
+                            {
+                                pila.Push(numero);
+                                Console.WriteLine("Número agregado correctamente.");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Entrada no válida, intenta otra vez.");
+                            }
+                        }
+                        break;
+
+                    case 2:
+                        // Mostrar los elementos de la pila
+                        if (pila.Count > 0)
+                        {
+                            Console.WriteLine("\nContenido actual de la pila:");
+                            foreach (int n in pila)
+                            {
+                                Console.WriteLine(n);
+                            }
+                            Console.WriteLine(); // espacio en blanco
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nLa pila está vacía.\n");
+                        }
+                        break;
+
+                    case 3:
+                        // Eliminar el último elemento (pop)
+                        if (pila.Count > 0)
+                        {
+                            int eliminado = pila.Pop();
+                            Console.WriteLine($"\nSe eliminó el número: {eliminado}");
+                            Console.WriteLine("Pila actual después de eliminar:");
+                            foreach (int n in pila)
+                            {
+                                Console.WriteLine(n);
+                            }
+                            Console.WriteLine();
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nNo se puede eliminar porque la pila está vacía.\n");
+                        }
+                        break;
+
+                    case 4:
+                        // Salir del programa
+                        continuar = false;
+                        Console.WriteLine("\nPrograma finalizado. Nos vemos :)");
+                        break;
+
+                    default:
+                        Console.WriteLine("\nOpción no válida, intenta otra vez.\n");
+                        break;
+                }
+            }
+
+            // Espera antes de cerrar la consola
+            Console.WriteLine("\nPresiona cualquier tecla para salir...");
+            Console.ReadKey();
+        }
+    }
+}
