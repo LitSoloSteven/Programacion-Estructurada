@@ -1,0 +1,88 @@
+using System;
+using System.Collections.Generic;
+
+public class SimuladorColaImpresion
+{
+    public static void Main(string[] args)
+    {
+        // Declarar una cola de tipo string
+        // Una cola (Queue) funciona como una fila:
+        // el primero que entra, es el primero que sale (FIFO).
+        Queue<string> colaDeImpresion = new Queue<string>();
+
+        Console.WriteLine("--- Simulador de Cola de Impresión ---");
+        Console.WriteLine("Ingrese los nombres de los documentos uno por uno.");
+        Console.WriteLine("Cuando termine, solo presione 'Enter' (deje vacío).");
+        Console.WriteLine(new string('-', 40));
+
+        // Permitir al usuario ingresar varios nombres de documentos
+        while (true)
+        {
+            Console.Write("Nombre del documento: ");
+            string documento = Console.ReadLine();
+
+            // Si la entrada está vacía, dejamos de pedir documentos
+            if (string.IsNullOrEmpty(documento))
+            {
+                break; // Sale del bucle 'while'
+            }
+
+            // Agregamos el documento al final de la fila.
+            colaDeImpresion.Enqueue(documento);
+            Console.WriteLine($" -> '{documento}' agregado a la cola.");
+        }
+
+        Console.WriteLine(new string('-', 40));
+
+        // Mostrar un mensaje si no hay documentos pendientes.
+        if (colaDeImpresion.Count == 0)
+        {
+            Console.WriteLine("RESULTADO: No hay documentos en la cola de impresión.");
+        }
+        else
+        {
+            // Mostrar la cola completa (orden de impresión).
+            Console.WriteLine("Cola de impresión actual (orden de llegada):");
+            int contador = 1;
+            
+            // Usamos 'foreach' para ver los elementos sin sacarlos de la cola
+            foreach (string doc in colaDeImpresion)
+            {
+                Console.WriteLine($"  {contador}. {doc}");
+                contador++;
+            }
+
+            Console.WriteLine(new string('-', 40));
+
+            // Atender el primer documento (Dequeue)
+            // Remueve y devuelve el PRIMER elemento que entró.
+            string documentoProcesado = colaDeImpresion.Dequeue();
+            
+            Console.WriteLine($"IMPRIMIENDO: Se ha procesado el documento '{documentoProcesado}'.");
+
+            Console.WriteLine(new string('-', 40));
+
+            // Mostrar los documentos restantes en la cola.
+            if (colaDeImpresion.Count == 0)
+            {
+                // Este es el caso si solo había un documento y ya se imprimió.
+                Console.WriteLine("RESULTADO: La cola de impresión ha quedado vacía.");
+            }
+            else
+            {
+                Console.WriteLine("Documentos restantes en la cola:");
+                contador = 1; // Reiniciamos el contador para la nueva lista
+                foreach (string doc in colaDeImpresion)
+                {
+                    Console.WriteLine($"  {contador}. {doc}");
+                    contador++;
+                }
+            }
+        }
+
+        // Fin del programa
+        Console.WriteLine(new string('-', 40));
+        Console.WriteLine("Presiona cualquier tecla para salir...");
+        Console.ReadKey();
+    }
+}
