@@ -1,0 +1,71 @@
+using System;
+using System.Collections.Generic;
+
+public class VerificadorParentesis
+{
+    /// <summary>
+    /// Verifica si los paréntesis de una expresión matemática están correctamente balanceados.
+    /// </summary>
+    /// <param name="expresion">La cadena que contiene la expresión.</param>
+    /// <returns>True si está balanceada, False en caso contrario.</returns>
+    public static bool VerificarBalance(string expresion)
+    {
+        // 1. Inicializar la pila
+        Stack<char> pila = new Stack<char>();
+
+        // 2. Recorrer la cadena carácter por carácter
+        foreach (char caracter in expresion)
+        {
+            // 3. Si se encuentra un '(', apilarlo.
+            if (caracter == '(')
+            {
+                pila.Push(caracter);
+            }
+            // 4. Si se encuentra un ')', intentar desapilar.
+            else if (caracter == ')')
+            {
+                // Manejo de error: Si la pila está vacía (cierre sin apertura previa).
+                if (pila.Count == 0)
+                {
+                    // No imprimimos el error aquí, lo hacemos al final para un mensaje más limpio.
+                    return false; 
+                }
+                
+                // Desapilamos el '('
+                pila.Pop();
+            }
+            // Se ignoran otros caracteres
+        }
+
+        // 5. Al finalizar, verificar si la pila está vacía.
+        return pila.Count == 0;
+    }
+
+    public static void Main(string[] args)
+    {
+        Console.WriteLine("--- Verificador de Paréntesis Balanceados ---");
+        Console.Write("Por favor, introduce una expresión matemática: ");
+        
+        // El usuario ingresa la expresión
+        string inputExpresion = Console.ReadLine();
+
+        // Llamar a la función de verificación
+        bool esBalanceada = VerificarBalance(inputExpresion);
+
+        // 6. Mostrar el mensaje final basado en el resultado
+        Console.WriteLine(new string('-', 40));
+
+        if (esBalanceada)
+        {
+            Console.WriteLine($"RESULTADO: La expresión \"{inputExpresion}\" es BALANCEADA.");
+        }
+        else
+        {
+            Console.WriteLine($"RESULTADO: La expresión \"{inputExpresion}\" NO es balanceada.");
+        }
+        
+        Console.WriteLine(new string('-', 40));
+        Console.WriteLine("Presiona cualquier tecla para salir...");
+        Console.ReadKey();
+    }
+}
