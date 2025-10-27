@@ -1,0 +1,129 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public class PilaDePalabras
+{
+    public static void Main(string[] args)
+    {
+        // 1. Crear una pila de tipo cadena (string).
+        Stack<string> pilaPalabras = new Stack<string>();
+        Console.WriteLine("--- Pila de Palabras (LIFO) ---");
+
+        // 2. y 3. Solicitar e insertar las palabras en la pila.
+        const int numPalabras = 5;
+        Console.WriteLine($"\nPor favor, ingrese {numPalabras} palabras:");
+
+        for (int i = 0; i < numPalabras; i++)
+        {
+            Console.Write($"Palabra {i + 1}: ");
+            string palabra = Console.ReadLine();
+            
+            if (!string.IsNullOrWhiteSpace(palabra))
+            {
+                pilaPalabras.Push(palabra); // Insertar (Push) la palabra en la pila
+            }
+            else
+            {
+                // Si el usuario ingresa una cadena vacía, decrementar el contador para repetir la solicitud.
+                Console.WriteLine("La palabra no puede estar vacía. Intente de nuevo.");
+                i--; 
+            }
+        }
+
+        Console.WriteLine("\n---------------------------------");
+        
+        // 5. Mostrar un mensaje si la pila está vacía (Verificación inicial, aunque no lo estará).
+        MostrarEstadoDePila(pilaPalabras);
+
+        // 4. Mostrar las palabras almacenadas en orden inverso (usando Pop para vaciar la pila).
+        MostrarPalabrasInverso(pilaPalabras);
+        
+        // La pila ahora está vacía después de MostrarPalabrasInverso
+        Console.WriteLine("\n---------------------------------");
+        
+        // 6. Permitir al usuario eliminar una palabra de la pila y mostrar el resultado final.
+        // Dado que la pila está vacía por el paso 4, pediremos 3 palabras más para demostrar la eliminación.
+        Console.WriteLine("Recargando la pila para demostrar la eliminación (3 palabras):");
+        for (int i = 0; i < 3; i++)
+        {
+            Console.Write($"Nueva Palabra {i + 1}: ");
+            string palabra = Console.ReadLine();
+            if (!string.IsNullOrWhiteSpace(palabra))
+            {
+                pilaPalabras.Push(palabra);
+            }
+            else
+            {
+                i--;
+            }
+        }
+
+        Console.WriteLine("\n--- Estado de la pila antes de eliminar ---");
+        Console.WriteLine($"Palabras actuales en la pila: {string.Join(", ", pilaPalabras.Reverse())}"); // Reverse para mostrar el orden de entrada
+
+        EliminarPalabra(pilaPalabras);
+
+        Console.WriteLine("\n--- Resultado Final ---");
+        // 5. Mostrar un mensaje si la pila está vacía (Verificación final).
+        MostrarEstadoDePila(pilaPalabras);
+        
+        // Mostrar el contenido final si no está vacía
+        if (pilaPalabras.Count > 0)
+        {
+            Console.WriteLine("Palabras restantes en la pila (orden de entrada):");
+            // Usamos .Reverse() para mostrar el orden natural de ingreso de las palabras.
+            foreach (var palabra in pilaPalabras.Reverse()) 
+            {
+                Console.WriteLine($"- {palabra}");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Muestra el contenido de la pila en orden LIFO y la vacía en el proceso.
+    /// </summary>
+    private static void MostrarPalabrasInverso(Stack<string> pila)
+    {
+        Console.WriteLine("4. Mostrando palabras en orden inverso (LIFO - última ingresada, primera mostrada):");
+        while (pila.Count > 0)
+        {
+            // Pop: saca y retorna el elemento superior (la última palabra ingresada)
+            string palabra = pila.Pop(); 
+            Console.WriteLine($"- {palabra}");
+        }
+        Console.WriteLine("--- La pila ha sido vaciada. ---");
+    }
+
+    /// <summary>
+    /// Verifica si la pila está vacía y muestra el mensaje correspondiente.
+    /// </summary>
+    private static void MostrarEstadoDePila(Stack<string> pila)
+    {
+        if (pila.Count == 0)
+        {
+            Console.WriteLine("5. La pila está VACÍA. 🙁");
+        }
+        else
+        {
+            Console.WriteLine($"La pila contiene {pila.Count} palabra(s).");
+        }
+    }
+
+    /// <summary>
+    /// Elimina una palabra (la superior) de la pila.
+    /// </summary>
+    private static void EliminarPalabra(Stack<string> pila)
+    {
+        if (pila.Count > 0)
+        {
+            // Pop: elimina y retorna el elemento superior.
+            string palabraEliminada = pila.Pop(); 
+            Console.WriteLine($"\n6. Se ha eliminado la última palabra ingresada: **{palabraEliminada}**");
+        }
+        else
+        {
+            Console.WriteLine("\n6. No se puede eliminar una palabra: la pila ya está vacía.");
+        }
+    }
+}
