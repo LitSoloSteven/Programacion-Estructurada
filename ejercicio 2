@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions; // Para validar texto con expresiones regulares
 
 namespace ClinicaMedica
 {
@@ -7,8 +8,7 @@ namespace ClinicaMedica
     {
         static void Main(string[] args)
         {
-            // Diccionario para almacenar las colas por especialidad
-            // Cada especialidad tiene su propia cola de pacientes
+            // Diccionario donde cada especialidad tiene su propia cola de pacientes
             Dictionary<string, Queue<string>> colasEspecialidades = new Dictionary<string, Queue<string>>();
 
             bool salir = false;
@@ -59,7 +59,14 @@ namespace ClinicaMedica
             }
         }
 
-        // Método para crear una nueva especialidad y su cola
+        // Método para validar que el texto contenga solo letras y espacios
+        static bool EsTextoValido(string texto)
+        {
+            // ^ y $ indican inicio y fin de la cadena. Solo se permiten letras (mayúsculas o minúsculas) y espacios.
+            return Regex.IsMatch(texto, @"^[a-zA-ZÁÉÍÓÚáéíóúÑñ\s]+$");
+        }
+
+        // Método para crear una nueva especialidad
         static void CrearEspecialidad(Dictionary<string, Queue<string>> colas)
         {
             Console.Write("Ingrese el nombre de la nueva especialidad: ");
@@ -68,6 +75,12 @@ namespace ClinicaMedica
             if (string.IsNullOrEmpty(especialidad))
             {
                 Console.WriteLine("El nombre de la especialidad no puede estar vacío.");
+                return;
+            }
+
+            if (!EsTextoValido(especialidad))
+            {
+                Console.WriteLine("Solo se permiten letras y espacios en el nombre de la especialidad.");
                 return;
             }
 
@@ -109,11 +122,17 @@ namespace ClinicaMedica
                 return;
             }
 
+            if (!EsTextoValido(paciente))
+            {
+                Console.WriteLine("Solo se permiten letras y espacios en el nombre del paciente.");
+                return;
+            }
+
             colas[especialidad].Enqueue(paciente);
             Console.WriteLine($"Paciente '{paciente}' agregado a la cola de {especialidad}.");
         }
 
-        // Método para atender (eliminar) al primer paciente de una cola
+        // Método para atender al primer paciente de una especialidad
         static void AtenderPaciente(Dictionary<string, Queue<string>> colas)
         {
             if (colas.Count == 0)
@@ -141,7 +160,7 @@ namespace ClinicaMedica
             Console.WriteLine($"Paciente '{atendido}' ha sido atendido en {especialidad}.");
         }
 
-        // Método para mostrar los pacientes de una especialidad
+        // Método para mostrar los pacientes en una especialidad
         static void MostrarPacientes(Dictionary<string, Queue<string>> colas)
         {
             Console.Write("Ingrese la especialidad: ");
