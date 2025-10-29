@@ -1,0 +1,188 @@
+using System;
+using System.Collections.Generic;
+
+namespace ClinicaMedica
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // Diccionario para almacenar las colas por especialidad
+            // Cada especialidad tiene su propia cola de pacientes
+            Dictionary<string, Queue<string>> colasEspecialidades = new Dictionary<string, Queue<string>>();
+
+            bool salir = false;
+
+            while (!salir)
+            {
+                Console.WriteLine("===========================================");
+                Console.WriteLine("        CLÍNICA MÉDICA - MENÚ PRINCIPAL     ");
+                Console.WriteLine("===========================================");
+                Console.WriteLine("1. Crear una nueva especialidad");
+                Console.WriteLine("2. Agregar paciente a una cola");
+                Console.WriteLine("3. Atender paciente de una especialidad");
+                Console.WriteLine("4. Ver lista de pacientes en una especialidad");
+                Console.WriteLine("5. Mostrar todas las especialidades creadas");
+                Console.WriteLine("6. Salir");
+                Console.Write("Seleccione una opción (1-6): ");
+
+                string opcion = Console.ReadLine();
+                Console.WriteLine();
+
+                switch (opcion)
+                {
+                    case "1":
+                        CrearEspecialidad(colasEspecialidades);
+                        break;
+                    case "2":
+                        AgregarPaciente(colasEspecialidades);
+                        break;
+                    case "3":
+                        AtenderPaciente(colasEspecialidades);
+                        break;
+                    case "4":
+                        MostrarPacientes(colasEspecialidades);
+                        break;
+                    case "5":
+                        MostrarEspecialidades(colasEspecialidades);
+                        break;
+                    case "6":
+                        salir = true;
+                        Console.WriteLine("Saliendo del programa...");
+                        break;
+                    default:
+                        Console.WriteLine("Opción no válida. Intente nuevamente.");
+                        break;
+                }
+
+                Console.WriteLine();
+            }
+        }
+
+        // Método para crear una nueva especialidad y su cola
+        static void CrearEspecialidad(Dictionary<string, Queue<string>> colas)
+        {
+            Console.Write("Ingrese el nombre de la nueva especialidad: ");
+            string especialidad = Console.ReadLine().Trim();
+
+            if (string.IsNullOrEmpty(especialidad))
+            {
+                Console.WriteLine("El nombre de la especialidad no puede estar vacío.");
+                return;
+            }
+
+            if (colas.ContainsKey(especialidad))
+            {
+                Console.WriteLine("Esa especialidad ya existe.");
+            }
+            else
+            {
+                colas[especialidad] = new Queue<string>();
+                Console.WriteLine($"Especialidad '{especialidad}' creada correctamente.");
+            }
+        }
+
+        // Método para agregar un paciente a una cola existente
+        static void AgregarPaciente(Dictionary<string, Queue<string>> colas)
+        {
+            if (colas.Count == 0)
+            {
+                Console.WriteLine("No hay especialidades creadas. Cree una primero.");
+                return;
+            }
+
+            Console.Write("Ingrese la especialidad del paciente: ");
+            string especialidad = Console.ReadLine().Trim();
+
+            if (!colas.ContainsKey(especialidad))
+            {
+                Console.WriteLine("Esa especialidad no existe.");
+                return;
+            }
+
+            Console.Write("Ingrese el nombre del paciente: ");
+            string paciente = Console.ReadLine().Trim();
+
+            if (string.IsNullOrEmpty(paciente))
+            {
+                Console.WriteLine("El nombre del paciente no puede estar vacío.");
+                return;
+            }
+
+            colas[especialidad].Enqueue(paciente);
+            Console.WriteLine($"Paciente '{paciente}' agregado a la cola de {especialidad}.");
+        }
+
+        // Método para atender (eliminar) al primer paciente de una cola
+        static void AtenderPaciente(Dictionary<string, Queue<string>> colas)
+        {
+            if (colas.Count == 0)
+            {
+                Console.WriteLine("No hay especialidades creadas.");
+                return;
+            }
+
+            Console.Write("Ingrese la especialidad: ");
+            string especialidad = Console.ReadLine().Trim();
+
+            if (!colas.ContainsKey(especialidad))
+            {
+                Console.WriteLine("Esa especialidad no existe.");
+                return;
+            }
+
+            if (colas[especialidad].Count == 0)
+            {
+                Console.WriteLine("No hay pacientes en esta cola.");
+                return;
+            }
+
+            string atendido = colas[especialidad].Dequeue();
+            Console.WriteLine($"Paciente '{atendido}' ha sido atendido en {especialidad}.");
+        }
+
+        // Método para mostrar los pacientes de una especialidad
+        static void MostrarPacientes(Dictionary<string, Queue<string>> colas)
+        {
+            Console.Write("Ingrese la especialidad: ");
+            string especialidad = Console.ReadLine().Trim();
+
+            if (!colas.ContainsKey(especialidad))
+            {
+                Console.WriteLine("Esa especialidad no existe.");
+                return;
+            }
+
+            Queue<string> cola = colas[especialidad];
+
+            if (cola.Count == 0)
+            {
+                Console.WriteLine("No hay pacientes en esta especialidad.");
+            }
+            else
+            {
+                Console.WriteLine($"Pacientes en la especialidad '{especialidad}':");
+                foreach (string paciente in cola)
+                {
+                    Console.WriteLine($"- {paciente}");
+                }
+            }
+        }
+
+        // Método para mostrar todas las especialidades creadas
+        static void MostrarEspecialidades(Dictionary<string, Queue<string>> colas)
+        {
+            if (colas.Count == 0)
+            {
+                Console.WriteLine("No hay especialidades creadas.");
+                return;
+            }
+
+            Console.WriteLine("Especialidades creadas:");
+            foreach (var especialidad in colas.Keys)
+            {
+                Console.WriteLine($"- {especialidad} ({colas[especialidad].Count} pacientes en espera)");
+            }
+        }
+    }
+}
