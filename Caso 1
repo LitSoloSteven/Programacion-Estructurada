@@ -15,10 +15,10 @@ namespace ControlDeVersiones
             // Ciclo principal del programa
             while (continuar)
             {
-                Console.WriteLine("==== Sistema de Control de Versiones ====");
+                Console.WriteLine(" Sistema de Control de Versiones");
                 Console.WriteLine("1. Registrar nueva acción");
                 Console.WriteLine("2. Ver última modificación");
-                Console.WriteLine("3. Deshacer última acción (Undo)");
+                Console.WriteLine("3. Deshacer última acción ");
                 Console.WriteLine("4. Mostrar todas las acciones");
                 Console.WriteLine("5. Salir");
                 Console.Write("Selecciona una opción: ");
