@@ -1,0 +1,122 @@
+using System;
+using System.Collections.Generic; // Para usar la clase Stack
+
+namespace ControlDeVersiones
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // Pila que guarda las acciones realizadas en el sistema de versionado
+            Stack<string> acciones = new Stack<string>();
+            bool continuar = true;
+            int opcion = 0;
+
+            // Ciclo principal del programa
+            while (continuar)
+            {
+                Console.WriteLine("==== Sistema de Control de Versiones ====");
+                Console.WriteLine("1. Registrar nueva acción");
+                Console.WriteLine("2. Ver última modificación");
+                Console.WriteLine("3. Deshacer última acción (Undo)");
+                Console.WriteLine("4. Mostrar todas las acciones");
+                Console.WriteLine("5. Salir");
+                Console.Write("Selecciona una opción: ");
+
+                // Validar que el usuario escriba un número
+                if (!int.TryParse(Console.ReadLine(), out opcion))
+                {
+                    Console.WriteLine("\nPor favor ingresa un número válido.\n");
+                    continue; // vuelve al inicio del ciclo
+                }
+
+                switch (opcion)
+                {
+                    case 1:
+                        // Registrar una nueva acción
+                        Console.WriteLine("\nEscribe una descripción de la acción realizada:");
+                        Console.WriteLine("Ejemplo: Agregar función, Eliminar clase, Modificar variable.");
+                        Console.Write("Acción: ");
+                        string nuevaAccion = Console.ReadLine();
+
+                        if (!string.IsNullOrWhiteSpace(nuevaAccion))
+                        {
+                            acciones.Push(nuevaAccion);
+                            Console.WriteLine($"Acción '{nuevaAccion}' registrada correctamente.\n");
+                        }
+                        else
+                        {
+                            Console.WriteLine("La acción no puede estar vacía.\n");
+                        }
+                        break;
+
+                    case 2:
+                        // Mostrar la última acción sin eliminarla (Peek)
+                        if (acciones.Count > 0)
+                        {
+                            Console.WriteLine($"\nÚltima acción registrada: {acciones.Peek()}\n");
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nNo hay acciones registradas.\n");
+                        }
+                        break;
+
+                    case 3:
+                        // Deshacer última acción (Pop)
+                        if (acciones.Count > 0)
+                        {
+                            string deshecha = acciones.Pop();
+                            Console.WriteLine($"\nSe deshizo la acción: '{deshecha}'");
+
+                            if (acciones.Count > 0)
+                            {
+                                Console.WriteLine("Acción actual después del deshacer:");
+                                Console.WriteLine($"→ {acciones.Peek()}\n");
+                            }
+                            else
+                            {
+                                Console.WriteLine("No quedan más acciones por deshacer.\n");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nNo hay acciones para deshacer.\n");
+                        }
+                        break;
+
+                    case 4:
+                        // Mostrar todas las acciones guardadas
+                        if (acciones.Count > 0)
+                        {
+                            Console.WriteLine("\nHistorial de acciones (de la más reciente a la más antigua):");
+                            foreach (string accion in acciones)
+                            {
+                                Console.WriteLine($"- {accion}");
+                            }
+                            Console.WriteLine();
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nNo hay acciones registradas.\n");
+                        }
+                        break;
+
+                    case 5:
+                        // Salir del programa
+                        continuar = false;
+                        Console.WriteLine("\nSaliendo del sistema de versionado...");
+                        break;
+
+                    default:
+                        Console.WriteLine("\nOpción no válida. Intenta otra vez.\n");
+                        break;
+                }
+            }
+
+            // Esperar antes de cerrar
+            Console.WriteLine("\nPresiona cualquier tecla para cerrar...");
+            Console.ReadKey();
+        }
+    }
+}
