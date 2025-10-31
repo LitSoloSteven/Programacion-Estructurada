@@ -1,0 +1,173 @@
+using System;
+using System.Collections.Generic;
+
+namespace MenuListaBasico
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // Creamos una lista de cadenas (strings)
+            List<string> miLista = new List<string>();
+
+            bool salir = false;
+
+            while (!salir)
+            {
+                Console.WriteLine("\n==================================");
+                Console.WriteLine("    MENÚ DE MÉTODOS DE LA LISTA   ");
+                Console.WriteLine("==================================");
+                Console.WriteLine($"Elementos actuales en la lista: {miLista.Count}");
+                Console.WriteLine("1. Add (Agregar elemento)");
+                Console.WriteLine("2. Remove (Quitar elemento por valor)");
+                Console.WriteLine("3. Clear (Borrar todos los elementos)");
+                Console.WriteLine("4. Contains (Verificar si existe un elemento)");
+                Console.WriteLine("5. Insert (Insertar elemento en una posición)");
+                Console.WriteLine("6. Mostrar Lista Completa"); // Opción nueva en el menú
+                Console.WriteLine("7. Salir");
+                Console.WriteLine("==================================");
+                Console.Write("Seleccione una opción (1-7): ");
+
+                string opcion = Console.ReadLine();
+                Console.WriteLine();
+
+                switch (opcion)
+                {
+                    case "1":
+                        MetodoAdd(miLista);
+                        break;
+                    case "2":
+                        MetodoRemove(miLista);
+                        break;
+                    case "3":
+                        MetodoClear(miLista);
+                        break;
+                    case "4":
+                        MetodoContains(miLista);
+                        break;
+                    case "5":
+                        MetodoInsert(miLista);
+                        break;
+                    case "6":
+                        // Simplemente llamamos a la función de mostrar lista
+                        MostrarListaCompleta(miLista);
+                        break;
+                    case "7":
+                        salir = true;
+                        Console.WriteLine("Saliendo del programa...");
+                        break;
+                    default:
+                        Console.WriteLine("Opción no válida. Intente de nuevo.");
+                        break;
+                }
+
+                if (!salir && opcion != "6") // Pausa después de las operaciones si no salimos ni mostramos la lista
+                {
+                    Console.WriteLine("\nPresione Enter para continuar...");
+                    Console.ReadLine();
+                }
+            }
+        }
+
+        // 1. Método Add
+        static void MetodoAdd(List<string> lista)
+        {
+            Console.Write("Ingrese el texto a agregar (Add): ");
+            string item = Console.ReadLine();
+            lista.Add(item);
+            Console.WriteLine($"'{item}' ha sido agregado a la lista.");
+        }
+
+        // 2. Método Remove
+        static void MetodoRemove(List<string> lista)
+        {
+            if (lista.Count == 0)
+            {
+                Console.WriteLine("La lista está vacía. No se puede remover.");
+                return;
+            }
+
+            Console.Write("Ingrese el texto a remover (Remove): ");
+            string item = Console.ReadLine();
+
+            if (lista.Remove(item))
+            {
+                Console.WriteLine($"'{item}' ha sido removido de la lista.");
+            }
+            else
+            {
+                Console.WriteLine($"'{item}' no se encontró en la lista.");
+            }
+        }
+
+        // 3. Método Clear
+        static void MetodoClear(List<string> lista)
+        {
+            lista.Clear();
+            Console.WriteLine("Todos los elementos han sido eliminados (Clear).");
+        }
+
+        // 4. Método Contains
+        static void MetodoContains(List<string> lista)
+        {
+            Console.Write("Ingrese el texto a buscar (Contains): ");
+            string item = Console.ReadLine();
+
+            if (lista.Contains(item))
+            {
+                Console.WriteLine($"La lista SÍ contiene el elemento '{item}'.");
+            }
+            else
+            {
+                Console.WriteLine($"La lista NO contiene el elemento '{item}'.");
+            }
+        }
+
+        // 5. Método Insert
+        static void MetodoInsert(List<string> lista)
+        {
+            Console.Write("Ingrese el texto a insertar: ");
+            string item = Console.ReadLine();
+
+            Console.Write("Ingrese la posición (número) donde quiere insertarlo (empezando en 0): ");
+
+            if (int.TryParse(Console.ReadLine(), out int indice))
+            {
+                if (indice >= 0 && indice <= lista.Count)
+                {
+                    lista.Insert(indice, item);
+                    Console.WriteLine($"'{item}' ha sido insertado en la posición {indice}.");
+                }
+                else
+                {
+                    Console.WriteLine("Error: La posición ingresada está fuera de los límites válidos.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Error: Entrada no válida. Debe ingresar un número para la posición.");
+            }
+        }
+
+        // Función para mostrar la lista completa (anteriormente llamada MostrarListaActual)
+        static void MostrarListaCompleta(List<string> lista)
+        {
+            Console.WriteLine("\n--- LISTA COMPLETA DE ELEMENTOS ---");
+            if (lista.Count == 0)
+            {
+                Console.WriteLine("La lista está vacía.");
+            }
+            else
+            {
+                // Iteramos sobre la lista para mostrar cada elemento y su posición
+                for (int i = 0; i < lista.Count; i++)
+                {
+                    Console.WriteLine($"Posición {i}: {lista[i]}");
+                }
+            }
+            Console.WriteLine("----------------------------------");
+            Console.WriteLine("Presione Enter para continuar...");
+            Console.ReadLine();
+        }
+    }
+}
