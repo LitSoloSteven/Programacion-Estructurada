@@ -10,7 +10,7 @@ public class Program
         ArbolNumeros arbol = new ArbolNumeros(LimiteArbol); // Se crea el árbol con el límite establecido
         int opcion = 0;
 
-        Console.WriteLine("--- Programa de Árbol de Números Binario de Búsqueda ---");
+        Console.WriteLine(" Programa de Árbol de Números Binario de Búsqueda ");
         Console.WriteLine($"Nota: Límite máximo de elementos es {LimiteArbol}.");
         Console.WriteLine();
 
@@ -182,7 +182,7 @@ public class ArbolNumeros
             return;
         }
 
-        Console.WriteLine("\n--- Estructura Piramidal del Árbol ---");
+        Console.WriteLine("\nEstructura Piramidal del Árbol");
 
         int altura = ObtenerAltura(Raiz); // Calcula la altura total
         Queue<Nodo> cola = new Queue<Nodo>();
