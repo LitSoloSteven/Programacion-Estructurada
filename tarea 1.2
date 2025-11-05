@@ -1,0 +1,283 @@
+using System;
+using System.Linq; 
+
+// =================================================================
+// I. PROGRAMA PRINCIPAL Y MENÚ
+// =================================================================
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        ArbolNombres arbol = new ArbolNombres();
+        int opcion = 0;
+
+        Console.WriteLine("--- Programa de Árbol de Nombres Binario de Búsqueda ---");
+        Console.WriteLine();
+
+        while (opcion != 6) 
+        {
+            MostrarMenu();
+            if (int.TryParse(Console.ReadLine(), out opcion))
+            {
+                switch (opcion)
+                {
+                    case 1:
+                        InsertarVariosNombres(arbol);
+                        break;
+                    case 2:
+                        BuscarNombre(arbol);
+                        break;
+                    case 3:
+                        arbol.MostrarNombresOrdenados();
+                        break;
+                    case 4:
+                        ValidarVacio(arbol);
+                        break;
+                    case 5: // Opción para mostrar la estructura visual
+                        arbol.MostrarEstructuraPiramidal();
+                        break;
+                    case 6: // Opción Salir
+                        Console.WriteLine("Saliendo del programa. ¡Hasta luego!");
+                        break;
+                    default:
+                        Console.WriteLine("Opción no válida. Por favor, selecciona una opción del 1 al 6.");
+                        break;
+                }
+            }
+            else
+            {
+                Console.WriteLine("Entrada no válida. Por favor, ingresa un número para la opción.");
+            }
+            Console.WriteLine(); 
+        }
+    }
+
+    private static void MostrarMenu()
+    {
+        Console.WriteLine("Selecciona una opción:");
+        Console.WriteLine("1. Insertar varios nombres");
+        Console.WriteLine("2. Buscar uno específico");
+        Console.WriteLine("3. Mostrar nombres ordenados");
+        Console.WriteLine("4. Mensaje si el árbol está vacío");
+        Console.WriteLine("5. Mostrar estructura piramidal");
+        Console.WriteLine("6. Salir");
+        Console.Write("Tu opción: ");
+    }
+
+    private static void InsertarVariosNombres(ArbolNombres arbol)
+    {
+        Console.Write("Ingresa nombres separados por espacios (ej: Ana Juan Maria): ");
+        string entrada = Console.ReadLine();
+        string[] nombresTexto = entrada.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (string nombre in nombresTexto)
+        {
+            if (!string.IsNullOrWhiteSpace(nombre))
+            {
+                arbol.Insertar(nombre);
+                Console.WriteLine($"Nombre '{nombre}' insertado.");
+            }
+            else
+            {
+                Console.WriteLine("Se omitió un nombre vacío.");
+            }
+        }
+    }
+
+    private static void BuscarNombre(ArbolNombres arbol)
+    {
+        if (arbol.EstaVacio())
+        {
+            Console.WriteLine("El árbol está vacío. Inserta nombres primero.");
+            return;
+        }
+
+        Console.Write("Ingresa el nombre a buscar: ");
+        string nombreBuscado = Console.ReadLine();
+        
+        if (string.IsNullOrWhiteSpace(nombreBuscado))
+        {
+            Console.WriteLine("El nombre a buscar no puede estar vacío.");
+            return;
+        }
+
+        if (arbol.Buscar(nombreBuscado))
+        {
+            Console.WriteLine($"VALIDACIÓN: El nombre '{nombreBuscado}' SÍ se encontró en el árbol.");
+        }
+        else
+        {
+            Console.WriteLine($"VALIDACIÓN: El nombre '{nombreBuscado}' NO se encontró en el árbol.");
+        }
+    }
+
+    private static void ValidarVacio(ArbolNombres arbol)
+    {
+        if (arbol.EstaVacio())
+        {
+            Console.WriteLine("VALIDACIÓN: El árbol está vacío.");
+        }
+        else
+        {
+            Console.WriteLine("VALIDACIÓN: El árbol NO está vacío.");
+        }
+    }
+}
+
+// -----------------------------------------------------------------
+// II. PROCESOS DEL ÁRBOL (Lógica Principal)
+// -----------------------------------------------------------------
+public class ArbolNombres
+{
+    public Nodo Raiz;
+
+    public ArbolNombres()
+    {
+        Raiz = null; // Inicializa el árbol vacío
+    }
+
+    // Método público de Inserción
+    public void Insertar(string nombre)
+    {
+        string nombreNormalizado = nombre.ToUpperInvariant();
+        Raiz = InsertarRecursivo(Raiz, nombreNormalizado);
+    }
+
+    // Método público de Búsqueda
+    public bool Buscar(string nombre)
+    {
+        string nombreNormalizado = nombre.ToUpperInvariant();
+        return BuscarRecursivo(Raiz, nombreNormalizado);
+    }
+
+    // Método público para recorrido Inorden (Muestra ordenado)
+    public void MostrarNombresOrdenados()
+    {
+        if (EstaVacio())
+        {
+            Console.WriteLine("El árbol está vacío. No hay nombres para mostrar.");
+            return;
+        }
+
+        Console.Write("Nombres en orden alfabético: ");
+        RecorridoInordenRecursivo(Raiz);
+        Console.WriteLine();
+    }
+
+    // Método público para validar si está vacío
+    public bool EstaVacio()
+    {
+        return Raiz == null;
+    }
+
+    // Método público para mostrar la estructura visual (piramidal)
+    public void MostrarEstructuraPiramidal(int incrementoEspacio = 4)
+    {
+        if (EstaVacio())
+        {
+            Console.WriteLine("El árbol está vacío. No hay estructura para mostrar.");
+            return;
+        }
+        
+        Console.WriteLine("--- Estructura del Árbol (Visualización Piramidal) ---");
+        MostrarEstructuraRecursiva(Raiz, 0, incrementoEspacio);
+    }
+    
+// -----------------------------------------------------------------
+// III. ELEMENTOS INTERNOS DEL ÁRBOL (Detalle de Implementación)
+// -----------------------------------------------------------------
+
+    // Lógica recursiva de inserción
+    private Nodo InsertarRecursivo(Nodo actual, string nombre)
+    {
+        if (actual == null)
+        {
+            return new Nodo(nombre); // Caso base: inserta el nuevo nodo aquí
+        }
+        
+        int comparacion = String.Compare(nombre, actual.Valor, StringComparison.Ordinal);
+
+        if (comparacion < 0) // El nombre es menor, va a la izquierda
+        {
+            actual.Izquierdo = InsertarRecursivo(actual.Izquierdo, nombre);
+        }
+        else if (comparacion > 0) // El nombre es mayor, va a la derecha
+        {
+            actual.Derecho = InsertarRecursivo(actual.Derecho, nombre);
+        }
+        // Si comparacion es 0, es un duplicado y se ignora
+
+        return actual;
+    }
+
+    // Lógica recursiva de búsqueda
+    private bool BuscarRecursivo(Nodo actual, string nombre)
+    {
+        if (actual == null)
+        {
+            return false; // Caso base: no encontrado
+        }
+
+        int comparacion = String.Compare(nombre, actual.Valor, StringComparison.Ordinal);
+
+        if (comparacion == 0)
+        {
+            return true; // Caso base: encontrado
+        }
+        else if (comparacion < 0)
+        {
+            return BuscarRecursivo(actual.Izquierdo, nombre); // Busca a la izquierda
+        }
+        else
+        {
+            return BuscarRecursivo(actual.Derecho, nombre); // Busca a la derecha
+        }
+    }
+
+    // Lógica recursiva del recorrido Inorden (Izquierdo -> Raíz -> Derecho)
+    private void RecorridoInordenRecursivo(Nodo actual)
+    {
+        if (actual != null)
+        {
+            RecorridoInordenRecursivo(actual.Izquierdo); // 1. Recorre izquierda
+            Console.Write(actual.Valor + " ");          // 2. Procesa la raíz (imprime)
+            RecorridoInordenRecursivo(actual.Derecho);  // 3. Recorre derecha
+        }
+    }
+    
+    // Lógica recursiva para la visualización piramidal
+    private void MostrarEstructuraRecursiva(Nodo actual, int espacio, int incrementoEspacio)
+    {
+        if (actual == null)
+        {
+            return;
+        }
+
+        espacio += incrementoEspacio; // Aumenta el nivel de indentación
+        
+        // Muestra la rama derecha primero para la orientación visual
+        MostrarEstructuraRecursiva(actual.Derecho, espacio, incrementoEspacio);
+
+        // Imprime el nodo actual con la indentación correcta
+        string indentacion = new string(' ', espacio - incrementoEspacio);
+        Console.WriteLine(indentacion + actual.Valor);
+
+        // Muestra la rama izquierda
+        MostrarEstructuraRecursiva(actual.Izquierdo, espacio, incrementoEspacio);
+    }
+}
+
+// Clase para representar cada nodo del árbol
+public class Nodo
+{
+    public string Valor;
+    public Nodo Izquierdo;
+    public Nodo Derecho;
+
+    public Nodo(string valor)
+    {
+        Valor = valor.ToUpperInvariant(); // Almacena en mayúsculas para la comparación
+        Izquierdo = null;
+        Derecho = null;
+    }
+}
