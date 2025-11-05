@@ -15,7 +15,7 @@ public class Program
         Console.WriteLine();
 
         // Ciclo principal del menú
-        while (opcion != 6)
+        while (opcion != 5)
         {
             MostrarMenu(); // Se muestra el menú
             if (int.TryParse(Console.ReadLine(), out opcion))
@@ -35,9 +35,6 @@ public class Program
                         ValidarVacio(arbol); // Comprobar si el árbol está vacío
                         break;
                     case 5:
-                        arbol.MostrarEstructuraPiramidal(); // Mostrar forma visual del árbol
-                        break;
-                    case 6:
                         Console.WriteLine("Saliendo del programa. ¡Hasta luego!");
                         break;
                     default:
@@ -61,8 +58,7 @@ public class Program
         Console.WriteLine("2. Buscar uno específico");
         Console.WriteLine("3. Mostrar recorrido Inorden");
         Console.WriteLine("4. Validar si el árbol está vacío");
-        Console.WriteLine("5. Mostrar estructura piramidal (real)");
-        Console.WriteLine("6. Salir");
+        Console.WriteLine("5. Salir);
         Console.Write("Tu opción: ");
     }
 
