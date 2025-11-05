@@ -123,9 +123,9 @@ public class Program
     }
 }
 
-// ===============================================================
+
 // CLASE ÁRBOL BINARIO DE BÚSQUEDA
-// ===============================================================
+
 public class ArbolNumeros
 {
     public Nodo Raiz; // Nodo raíz del árbol
@@ -171,9 +171,9 @@ public class ArbolNumeros
     public bool EstaVacio() => Raiz == null;
     public int ContarNodos() => contadorNodos;
 
-    // ============================================================
-    // Mostrar árbol en forma PIRAMIDAL (centrado)
-    // ============================================================
+
+    // Mostrar árbol en forma PIRAMIDAL 
+
     public void MostrarEstructuraPiramidal()
     {
         if (Raiz == null)
@@ -231,9 +231,9 @@ public class ArbolNumeros
         return 1 + Math.Max(ObtenerAltura(nodo.Izquierdo), ObtenerAltura(nodo.Derecho));
     }
 
-    // ------------------------------------------------------------
+
     // Implementaciones internas
-    // ------------------------------------------------------------
+
     private Nodo InsertarRecursivo(Nodo actual, int valor)
     {
         if (actual == null)
@@ -272,9 +272,9 @@ public class ArbolNumeros
     }
 }
 
-// ===============================================================
+
 // NODO DEL ÁRBOL
-// ===============================================================
+
 public class Nodo
 {
     public int Valor; // Dato almacenado
