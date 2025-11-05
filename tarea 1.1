@@ -10,7 +10,7 @@ public class Program
         ArbolNumeros arbol = new ArbolNumeros(LimiteArbol); // Se crea el árbol con el límite establecido
         int opcion = 0;
 
-        Console.WriteLine(" Programa de Árbol de Números Binario de Búsqueda ");
+        Console.WriteLine("--- Programa de Árbol de Números Binario de Búsqueda ---");
         Console.WriteLine($"Nota: Límite máximo de elementos es {LimiteArbol}.");
         Console.WriteLine();
 
@@ -38,7 +38,7 @@ public class Program
                         Console.WriteLine("Saliendo del programa. ¡Hasta luego!");
                         break;
                     default:
-                        Console.WriteLine("Opción no válida. Elige del 1 al 6.");
+                        Console.WriteLine("Opción no válida. Elige del 1 al 5.");
                         break;
                 }
             }
@@ -58,7 +58,7 @@ public class Program
         Console.WriteLine("2. Buscar uno específico");
         Console.WriteLine("3. Mostrar recorrido Inorden");
         Console.WriteLine("4. Validar si el árbol está vacío");
-        Console.WriteLine("5. Salir);
+        Console.WriteLine("5. Salir");
         Console.Write("Tu opción: ");
     }
 
@@ -123,9 +123,9 @@ public class Program
     }
 }
 
-
+// ===============================================================
 // CLASE ÁRBOL BINARIO DE BÚSQUEDA
-
+// ===============================================================
 public class ArbolNumeros
 {
     public Nodo Raiz; // Nodo raíz del árbol
@@ -147,6 +147,14 @@ public class ArbolNumeros
         {
             Raiz = InsertarRecursivo(Raiz, valor);
             contadorNodos++;
+        }
+        else if (Buscar(valor))
+        {
+            Console.WriteLine($"El número {valor} ya existe en el árbol y no se insertó.");
+        }
+        else
+        {
+            Console.WriteLine($"No se puede insertar {valor}: se alcanzó el límite de {limite}.");
         }
     }
 
@@ -171,69 +179,16 @@ public class ArbolNumeros
     public bool EstaVacio() => Raiz == null;
     public int ContarNodos() => contadorNodos;
 
-
-    // Mostrar árbol en forma PIRAMIDAL 
-
-    public void MostrarEstructuraPiramidal()
-    {
-        if (Raiz == null)
-        {
-            Console.WriteLine("El árbol está vacío. No hay estructura para mostrar.");
-            return;
-        }
-
-        Console.WriteLine("\nEstructura Piramidal del Árbol");
-
-        int altura = ObtenerAltura(Raiz); // Calcula la altura total
-        Queue<Nodo> cola = new Queue<Nodo>();
-        cola.Enqueue(Raiz); // Se inicia con la raíz
-
-        int nivel = 1;
-        while (nivel <= altura)
-        {
-            int cantidadNodos = cola.Count;
-            int espaciosEntre = (int)Math.Pow(2, altura - nivel + 1) - 1;
-            int espaciosInicio = (int)Math.Pow(2, altura - nivel) - 1;
-
-            // Espacios iniciales para centrar
-            Console.Write(new string(' ', espaciosInicio));
-
-            // Recorre los nodos de ese nivel
-            for (int i = 0; i < cantidadNodos; i++)
-            {
-                Nodo actual = cola.Dequeue();
-                if (actual != null)
-                {
-                    Console.Write($"{actual.Valor}");
-                    cola.Enqueue(actual.Izquierdo);
-                    cola.Enqueue(actual.Derecho);
-                }
-                else
-                {
-                    Console.Write(" ");
-                    cola.Enqueue(null);
-                    cola.Enqueue(null);
-                }
-
-                if (i < cantidadNodos - 1)
-                    Console.Write(new string(' ', espaciosEntre));
-            }
-
-            Console.WriteLine();
-            nivel++;
-        }
-    }
-
-    // Calcula la altura del árbol
+    // Calcula la altura del árbol (usado en la versión piramidal)
     private int ObtenerAltura(Nodo nodo)
     {
         if (nodo == null) return 0;
         return 1 + Math.Max(ObtenerAltura(nodo.Izquierdo), ObtenerAltura(nodo.Derecho));
     }
 
-
+    // ------------------------------------------------------------
     // Implementaciones internas
-
+    // ------------------------------------------------------------
     private Nodo InsertarRecursivo(Nodo actual, int valor)
     {
         if (actual == null)
@@ -272,9 +227,9 @@ public class ArbolNumeros
     }
 }
 
-
+// ===============================================================
 // NODO DEL ÁRBOL
-
+// ===============================================================
 public class Nodo
 {
     public int Valor; // Dato almacenado
