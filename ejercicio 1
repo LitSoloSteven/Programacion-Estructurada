@@ -1,0 +1,235 @@
+using System;
+using System.Collections.Generic;
+
+// =================================================================
+// I. PROGRAMA PRINCIPAL Y MENÚ (Lo que ve el usuario)
+// =================================================================
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        ArbolNumeros arbol = new ArbolNumeros();
+        int opcion = 0;
+
+        Console.WriteLine("--- Programa de Árbol de Números Binario de Búsqueda ---");
+        Console.WriteLine();
+
+        while (opcion != 5)
+        {
+            MostrarMenu();
+            if (int.TryParse(Console.ReadLine(), out opcion))
+            {
+                switch (opcion)
+                {
+                    case 1:
+                        InsertarVariosNumeros(arbol);
+                        break;
+                    case 2:
+                        BuscarNumero(arbol);
+                        break;
+                    case 3:
+                        arbol.RecorridoInorden();
+                        break;
+                    case 4:
+                        ValidarVacio(arbol);
+                        break;
+                    case 5:
+                        Console.WriteLine("Saliendo del programa. ¡Hasta luego!");
+                        break;
+                    default:
+                        Console.WriteLine("Opción no válida. Por favor, selecciona una opción del 1 al 5.");
+                        break;
+                }
+            }
+            else
+            {
+                Console.WriteLine("Entrada no válida. Por favor, ingresa un número para la opción.");
+            }
+            Console.WriteLine();
+        }
+    }
+
+    private static void MostrarMenu()
+    {
+        Console.WriteLine("Selecciona una opción:");
+        Console.WriteLine("1. Insertar varios números");
+        Console.WriteLine("2. Buscar uno específico");
+        Console.WriteLine("3. Mostrar recorrido Inorden");
+        Console.WriteLine("4. Validar si el árbol está vacío");
+        Console.WriteLine("5. Salir");
+        Console.Write("Tu opción: ");
+    }
+
+    private static void InsertarVariosNumeros(ArbolNumeros arbol)
+    {
+        Console.Write("Ingresa números separados por espacios (ej: 50 30 70 20): ");
+        string entrada = Console.ReadLine();
+        string[] numerosTexto = entrada.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (string numTexto in numerosTexto)
+        {
+            if (int.TryParse(numTexto, out int numero))
+            {
+                arbol.Insertar(numero);
+                Console.WriteLine($"Número {numero} insertado.");
+            }
+            else
+            {
+                Console.WriteLine($"'{numTexto}' no es un número válido y fue omitido.");
+            }
+        }
+    }
+
+    private static void BuscarNumero(ArbolNumeros arbol)
+    {
+        if (arbol.EstaVacio())
+        {
+            Console.WriteLine("El árbol está vacío. Inserta números primero.");
+            return;
+        }
+
+        Console.Write("Ingresa el número a buscar: ");
+        if (int.TryParse(Console.ReadLine(), out int numeroBuscado))
+        {
+            if (arbol.Buscar(numeroBuscado))
+            {
+                Console.WriteLine($"VALIDACIÓN: El número {numeroBuscado} SÍ se encontró en el árbol.");
+            }
+            else
+            {
+                Console.WriteLine($"VALIDACIÓN: El número {numeroBuscado} NO se encontró en el árbol.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Entrada no válida. Por favor, ingresa un número entero.");
+        }
+    }
+
+    private static void ValidarVacio(ArbolNumeros arbol)
+    {
+        if (arbol.EstaVacio())
+        {
+            Console.WriteLine("VALIDACIÓN: El árbol está vacío.");
+        }
+        else
+        {
+            Console.WriteLine("VALIDACIÓN: El árbol NO está vacío.");
+        }
+    }
+}
+
+// -----------------------------------------------------------------
+// II. PROCESOS DEL ÁRBOL (Lógica Principal y Métodos Públicos)
+// -----------------------------------------------------------------
+public class ArbolNumeros
+{
+    public Nodo Raiz;
+
+    public ArbolNumeros()
+    {
+        Raiz = null;
+    }
+
+    // --- 1. Insertar un número ---
+    public void Insertar(int valor)
+    {
+        Raiz = InsertarRecursivo(Raiz, valor);
+    }
+
+    // --- 2. Buscar un número específico ---
+    public bool Buscar(int valor)
+    {
+        return BuscarRecursivo(Raiz, valor);
+    }
+
+    // --- 3. Mostrar recorrido Inorden ---
+    public void RecorridoInorden()
+    {
+        if (EstaVacio())
+        {
+            Console.WriteLine("El árbol está vacío. No hay nada que mostrar.");
+            return;
+        }
+
+        Console.Write("Recorrido Inorden (ordenado): ");
+        RecorridoInordenRecursivo(Raiz);
+        Console.WriteLine();
+    }
+
+    // --- 4. Validar si el árbol está vacío ---
+    public bool EstaVacio()
+    {
+        return Raiz == null;
+    }
+
+// -----------------------------------------------------------------
+// III. ELEMENTOS INTERNOS DEL ÁRBOL (Detalle de Implementación)
+// -----------------------------------------------------------------
+
+    private Nodo InsertarRecursivo(Nodo actual, int valor)
+    {
+        if (actual == null)
+        {
+            return new Nodo(valor);
+        }
+
+        if (valor < actual.Valor)
+        {
+            actual.Izquierdo = InsertarRecursivo(actual.Izquierdo, valor);
+        }
+        else if (valor > actual.Valor)
+        {
+            actual.Derecho = InsertarRecursivo(actual.Derecho, valor);
+        }
+        // Los valores iguales se ignoran (no se insertan duplicados).
+
+        return actual;
+    }
+
+    private bool BuscarRecursivo(Nodo actual, int valor)
+    {
+        if (actual == null)
+        {
+            return false;
+        }
+
+        if (valor == actual.Valor)
+        {
+            return true;
+        }
+        else if (valor < actual.Valor)
+        {
+            return BuscarRecursivo(actual.Izquierdo, valor);
+        }
+        else
+        {
+            return BuscarRecursivo(actual.Derecho, valor);
+        }
+    }
+
+    private void RecorridoInordenRecursivo(Nodo actual)
+    {
+        if (actual != null)
+        {
+            RecorridoInordenRecursivo(actual.Izquierdo);
+            Console.Write(actual.Valor + " ");
+            RecorridoInordenRecursivo(actual.Derecho);
+        }
+    }
+}
+
+// Clase para representar cada elemento (nodo) del árbol
+public class Nodo
+{
+    public int Valor;
+    public Nodo Izquierdo;
+    public Nodo Derecho;
+
+    public Nodo(int valor)
+    {
+        Valor = valor;
+        Izquierdo = null;
+        Derecho = null;
+    }
+}
