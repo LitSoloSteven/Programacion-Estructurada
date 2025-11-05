@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-// =================================================================
-// I. PROGRAMA PRINCIPAL Y MENÚ
-// =================================================================
+
+// PROGRAMA PRINCIPAL Y MENÚ
+
 public class Program
 {
     public static void Main(string[] args)
@@ -12,7 +12,7 @@ public class Program
         ArbolNombres arbol = new ArbolNombres();
         int opcion = 0;
 
-        Console.WriteLine("--- Programa de Árbol de Nombres Binario de Búsqueda ---");
+        Console.WriteLine("Programa de Árbol de Nombres Binario de Búsqueda ");
         Console.WriteLine();
 
         while (opcion != 6)
@@ -116,9 +116,9 @@ public class Program
     }
 }
 
-// =================================================================
-// II. CLASE ÁRBOL BINARIO DE BÚSQUEDA DE NOMBRES
-// =================================================================
+
+//  CLASE ÁRBOL BINARIO DE BÚSQUEDA DE NOMBRES
+
 public class ArbolNombres
 {
     public Nodo Raiz;
@@ -155,9 +155,9 @@ public class ArbolNombres
 
     public bool EstaVacio() => Raiz == null;
 
-    // ============================================================
+  
     // VISUALIZACIÓN PIRAMIDAL REAL CON RAMAS
-    // ============================================================
+  
     public void MostrarEstructuraPiramidalConRamas()
     {
         if (Raiz == null)
@@ -166,7 +166,7 @@ public class ArbolNombres
             return;
         }
 
-        Console.WriteLine("\n----------- Estructura Piramidal del Árbol -----------");
+        Console.WriteLine("\n Estructura Piramidal del Árbol ");
 
         int altura = ObtenerAltura(Raiz);
         Queue<Nodo> cola = new Queue<Nodo>();
@@ -238,9 +238,9 @@ public class ArbolNombres
         return 1 + Math.Max(ObtenerAltura(nodo.Izquierdo), ObtenerAltura(nodo.Derecho));
     }
 
-    // ============================================================
+
     // Implementaciones internas
-    // ============================================================
+
     private Nodo InsertarRecursivo(Nodo actual, string nombre)
     {
         if (actual == null)
@@ -281,9 +281,9 @@ public class ArbolNombres
     }
 }
 
-// =================================================================
-// III. CLASE NODO
-// =================================================================
+
+//  CLASE NODO
+
 public class Nodo
 {
     public string Valor;
