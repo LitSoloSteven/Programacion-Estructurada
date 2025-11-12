@@ -1,0 +1,121 @@
+using System;
+using System.Collections.Generic;
+
+namespace GrafoVersionFinal
+{
+    // Clase que representa un grafo mediante una lista de adyacencia
+    class Grafo
+    {
+        // Cada nodo del grafo se guarda con su lista de vecinos
+        private Dictionary<string, List<string>> adyacencia = new Dictionary<string, List<string>>();
+
+        // Agrega un nodo si no existe en el diccionario
+        public void AgregarNodo(string nodo)
+        {
+            if (!adyacencia.ContainsKey(nodo))
+                adyacencia[nodo] = new List<string>();
+        }
+
+        // Crea una conexión entre dos nodos (el grafo es no dirigido)
+        public void AgregarArista(string origen, string destino)
+        {
+            adyacencia[origen].Add(destino);
+            adyacencia[destino].Add(origen);
+        }
+
+        // Muestra la lista de adyacencia completa
+        public void MostrarListaAdyacencia()
+        {
+            Console.WriteLine("\n=== LISTA DE ADYACENCIA ===");
+            foreach (var nodo in adyacencia)
+            {
+                Console.Write($"{nodo.Key} → ");
+                Console.WriteLine(string.Join(", ", nodo.Value));
+            }
+            Console.WriteLine("=============================");
+        }
+
+        // Recorrido en anchura (BFS)
+        public void BFS(string inicio)
+        {
+            Console.Write("\nRecorrido BFS: ");
+            Queue<string> cola = new Queue<string>();
+            HashSet<string> visitados = new HashSet<string>();
+
+            cola.Enqueue(inicio);
+            visitados.Add(inicio);
+
+            while (cola.Count > 0)
+            {
+                string actual = cola.Dequeue();
+                Console.Write(actual + " ");
+
+                // Se agregan los vecinos del nodo actual
+                foreach (string vecino in adyacencia[actual])
+                {
+                    if (!visitados.Contains(vecino))
+                    {
+                        visitados.Add(vecino);
+                        cola.Enqueue(vecino); // Se encola para seguir el orden por niveles
+                    }
+                }
+            }
+        }
+
+        // Recorrido en profundidad (DFS)
+        public void DFS(string inicio)
+        {
+            Console.Write("\nRecorrido DFS: ");
+            HashSet<string> visitados = new HashSet<string>();
+            DFSRecursivo(inicio, visitados);
+        }
+
+        // Método recursivo para el DFS
+        private void DFSRecursivo(string nodo, HashSet<string> visitados)
+        {
+            visitados.Add(nodo);
+            Console.Write(nodo + " ");
+
+            foreach (string vecino in adyacencia[nodo])
+            {
+                if (!visitados.Contains(vecino))
+                    DFSRecursivo(vecino, visitados); // Llamada recursiva
+            }
+        }
+    }
+
+    class Program
+    {
+        static void Main()
+        {
+            // Creación del grafo y sus nodos
+            Grafo grafo = new Grafo();
+            string[] nodos = { "A", "B", "C", "D", "E" };
+            foreach (string n in nodos)
+                grafo.AgregarNodo(n);
+
+            // Agregar las aristas
+            grafo.AgregarArista("A", "B");
+            grafo.AgregarArista("A", "C");
+            grafo.AgregarArista("B", "D");
+            grafo.AgregarArista("C", "E");
+            grafo.AgregarArista("D", "E");
+
+            // Mostrar la lista de adyacencia
+            grafo.MostrarListaAdyacencia();
+
+            // Recorridos BFS y DFS desde el nodo A
+            grafo.BFS("A");
+            grafo.DFS("A");
+
+            // Diferencias entre los recorridos
+            Console.WriteLine("\n\n=== DIFERENCIA ENTRE BFS Y DFS ===");
+            Console.WriteLine("→ BFS: recorre el grafo por niveles y usa una cola (FIFO).");
+            Console.WriteLine("→ DFS: recorre en profundidad usando recursión o una pila.");
+            Console.WriteLine("===================================");
+
+            Console.WriteLine("\nPresione una tecla para salir...");
+            Console.ReadKey();
+        }
+    }
+}
