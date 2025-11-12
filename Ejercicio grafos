@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace GrafoVersionFinal
+namespace Grafos
 {
     // Clase que representa un grafo mediante una lista de adyacencia
     class Grafo
@@ -29,7 +29,7 @@ namespace GrafoVersionFinal
             Console.WriteLine("\n=== LISTA DE ADYACENCIA ===");
             foreach (var nodo in adyacencia)
             {
-                Console.Write($"{nodo.Key} → ");
+                Console.Write($"{nodo.Key} -> ");
                 Console.WriteLine(string.Join(", ", nodo.Value));
             }
             Console.WriteLine("=============================");
@@ -110,8 +110,8 @@ namespace GrafoVersionFinal
 
             // Diferencias entre los recorridos
             Console.WriteLine("\n\n=== DIFERENCIA ENTRE BFS Y DFS ===");
-            Console.WriteLine("→ BFS: recorre el grafo por niveles y usa una cola (FIFO).");
-            Console.WriteLine("→ DFS: recorre en profundidad usando recursión o una pila.");
+            Console.WriteLine("-> BFS: recorre el grafo por niveles y usa una cola (FIFO).");
+            Console.WriteLine("-> DFS: recorre en profundidad usando recursión o una pila.");
             Console.WriteLine("===================================");
 
             Console.WriteLine("\nPresione una tecla para salir...");
