@@ -3,19 +3,18 @@ using System.Diagnostics; // stopwatch
 
 // --- 1. CONFIGURACION ---
 
-int N = 25000; 
+int N = 20000; 
 int[] arrayOriginal = GenerarArrayAleatorio(N);
 
 Console.WriteLine($"Comparacion de Algoritmos con N = {N} elementos.");
 Console.WriteLine("==================================================");
 
 // --- 2. PRUEBAS DE ORDENAMIENTO ---
-Console.WriteLine("\n### Pruebas de Ordenamiento ###");
+Console.WriteLine("\n### 1. Pruebas de Ordenamiento ###");
 
 // Clonamos el array para que cada algoritmo ordene los mismos datos
 int[] arrayParaBurbuja = (int[])arrayOriginal.Clone();
 int[] arrayParaInsercion = (int[])arrayOriginal.Clone();
-// CAMBIO: Renombramos este array para el nuevo algoritmo
 int[] arrayParaSeleccion = (int[])arrayOriginal.Clone();
 
 
@@ -31,11 +30,31 @@ OrdenamientoInsercion(arrayParaInsercion);
 swInsercion.Stop();
 Console.WriteLine($"Insertion Sort (Insercion): {swInsercion.Elapsed.TotalMilliseconds:F4} ms");
 
-// Algoritmo 3: CAMBIADO a Selection Sort
+// Algoritmo 3: Selection Sort (Seleccion)
 Stopwatch swSeleccion = Stopwatch.StartNew();
-OrdenamientoSeleccion(arrayParaSeleccion); // Llamamos a la nueva funcion
+OrdenamientoSeleccion(arrayParaSeleccion); // Usaremos este array ordenado para buscar
 swSeleccion.Stop();
 Console.WriteLine($"Selection Sort (Seleccion): {swSeleccion.Elapsed.TotalMilliseconds:F4} ms");
+
+
+// --- 3. PRUEBAS DE BUSQUEDA (NUEVO) ---
+Console.WriteLine("\n### 2. Pruebas de Busqueda ###");
+
+// Usaremos el array que ya ordeno Selection Sort
+// Para probar el "peor caso" de la Lineal, buscamos el ultimo elemento.
+int target = arrayParaSeleccion[N - 1]; 
+
+// Algoritmo 4: Busqueda Lineal
+Stopwatch swLineal = Stopwatch.StartNew();
+int idxLineal = BusquedaLineal(arrayParaSeleccion, target);
+swLineal.Stop();
+Console.WriteLine($"Busqueda Lineal:   {swLineal.Elapsed.TotalMilliseconds:F4} ms (Indice: {idxLineal})");
+
+// Algoritmo 5: Busqueda Binaria
+Stopwatch swBinaria = Stopwatch.StartNew();
+int idxBinaria = BusquedaBinaria(arrayParaSeleccion, target);
+swBinaria.Stop();
+Console.WriteLine($"Busqueda Binaria:  {swBinaria.Elapsed.TotalMilliseconds:F4} ms (Indice: {idxBinaria})");
 
 
 Console.WriteLine("\n==================================================");
@@ -68,7 +87,7 @@ void OrdenamientoBurbuja(int[] arr)
                 // Intercambio
                 int temp = arr[j];
                 arr[j] = arr[j + 1];
-                arr[j] = temp;
+                arr[j + 1] = temp;
             }
         }
     }
@@ -83,9 +102,7 @@ void OrdenamientoInsercion(int[] arr)
         int key = arr[i];
         int j = i - 1;
 
-        // Mueve los elementos de arr[0..i-1] que son
-        // mayores que key, a una posicion adelante
-        // de su posicion actual
+        // Mueve los elementos ...
         while (j >= 0 && arr[j] > key)
         {
             arr[j + 1] = arr[j];
@@ -95,29 +112,77 @@ void OrdenamientoInsercion(int[] arr)
     }
 }
 
-/// Algoritmo 3: Ordenamiento por Seleccion 
+/// Algoritmo 3: Ordenamiento por Seleccion
 void OrdenamientoSeleccion(int[] arr)
 {
     int n = arr.Length;
     
-    // Mover la 'frontera' del subarray ordenado uno por uno
     for (int i = 0; i < n - 1; i++)
     {
-        // Encontrar el elemento minimo en el array desordenado
-        // (desde 'i' hasta el final)
+        // Encontrar el elemento minimo...
         int min_idx = i;
         for (int j = i + 1; j < n; j++)
         {
             if (arr[j] < arr[min_idx])
             {
-                min_idx = j; // Encontramos un numero aun mas pequeno
+                min_idx = j; 
             }
         }
 
-        // Intercambiar el elemento minimo encontrado (en 'min_idx')
-        // con el primer elemento de la seccion desordenada (en 'i')
+        // Intercambiar el elemento minimo...
         int temp = arr[min_idx];
         arr[min_idx] = arr[i];
         arr[i] = temp;
     }
+}
+
+/// --- NUEVOS METODOS AÑADIDOS ---
+
+/// Algoritmo 4: Busqueda Lineal
+/// Revisa cada elemento uno por uno.
+int BusquedaLineal(int[] arr, int target)
+{
+    int n = arr.Length;
+    for (int i = 0; i < n; i++)
+    {
+        if (arr[i] == target)
+        {
+            return i; // Encontrado
+        }
+    }
+    return -1; // No encontrado
+}
+
+/// Algoritmo 5: Busqueda Binaria
+/// Requiere que el array este ORDENADO.
+/// Corta el array por la mitad en cada paso.
+int BusquedaBinaria(int[] arr, int target)
+{
+    int left = 0;
+    int right = arr.Length - 1;
+
+    while (left <= right)
+    {
+        // Calcula el indice del medio
+        int mid = left + (right - left) / 2;
+
+        // Si encontramos el objetivo
+        if (arr[mid] == target)
+        {
+            return mid; // Encontrado
+        }
+
+        // Si el objetivo es mas grande, ignoramos la mitad izquierda
+        if (arr[mid] < target)
+        {
+            left = mid + 1;
+        }
+        // Si el objetivo es mas pequeno, ignoramos la mitad derecha
+        else
+        {
+            right = mid - 1;
+        }
+    }
+    
+    return -1; // No encontrado
 }
