@@ -1,8 +1,8 @@
 using System;
-using System.Diagnostics; // Necesario para Stopwatch
+using System.Diagnostics; // stopwatch
 
 // --- 1. CONFIGURACION ---
-// 30000 puede tardar bastante, 20000 es un buen balance.
+
 int N = 20000; 
 int[] arrayOriginal = GenerarArrayAleatorio(N);
 
@@ -15,7 +15,8 @@ Console.WriteLine("\n### Pruebas de Ordenamiento ###");
 // Clonamos el array para que cada algoritmo ordene los mismos datos
 int[] arrayParaBurbuja = (int[])arrayOriginal.Clone();
 int[] arrayParaInsercion = (int[])arrayOriginal.Clone();
-int[] arrayParaQuickSort = (int[])arrayOriginal.Clone();
+// CAMBIO: Renombramos este array para el nuevo algoritmo
+int[] arrayParaSeleccion = (int[])arrayOriginal.Clone();
 
 
 // Algoritmo 1: Bubble Sort (Burbuja)
@@ -30,11 +31,11 @@ OrdenamientoInsercion(arrayParaInsercion);
 swInsercion.Stop();
 Console.WriteLine($"Insertion Sort (Insercion): {swInsercion.Elapsed.TotalMilliseconds:F4} ms");
 
-// Algoritmo 3: QuickSort (Rapido)
-Stopwatch swQuickSort = Stopwatch.StartNew();
-OrdenamientoRapido(arrayParaQuickSort, 0, arrayParaQuickSort.Length - 1);
-swQuickSort.Stop();
-Console.WriteLine($"QuickSort (Rapido):      {swQuickSort.Elapsed.TotalMilliseconds:F4} ms");
+// Algoritmo 3: CAMBIADO a Selection Sort
+Stopwatch swSeleccion = Stopwatch.StartNew();
+OrdenamientoSeleccion(arrayParaSeleccion); // Llamamos a la nueva funcion
+swSeleccion.Stop();
+Console.WriteLine($"Selection Sort (Seleccion): {swSeleccion.Elapsed.TotalMilliseconds:F4} ms");
 
 
 Console.WriteLine("\n==================================================");
@@ -46,3 +47,79 @@ Console.WriteLine("Pruebas finalizadas.");
 int[] GenerarArrayAleatorio(int tamano)
 {
     Random rand = new Random();
+    int[] arr = new int[tamano];
+    for (int i = 0; i < tamano; i++)
+    {
+        arr[i] = rand.Next(0, tamano * 10);
+    }
+    return arr;
+}
+
+/// Algoritmo 1: Ordenamiento Burbuja
+void OrdenamientoBurbuja(int[] arr)
+{
+    int n = arr.Length;
+    for (int i = 0; i < n - 1; i++)
+    {
+        for (int j = 0; j < n - i - 1; j++)
+        {
+            if (arr[j] > arr[j + 1])
+            {
+                // Intercambio
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j] = temp;
+            }
+        }
+    }
+}
+
+/// Algoritmo 2: Ordenamiento por Insercion
+void OrdenamientoInsercion(int[] arr)
+{
+    int n = arr.Length;
+    for (int i = 1; i < n; ++i)
+    {
+        int key = arr[i];
+        int j = i - 1;
+
+        // Mueve los elementos de arr[0..i-1] que son
+        // mayores que key, a una posicion adelante
+        // de su posicion actual
+        while (j >= 0 && arr[j] > key)
+        {
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        }
+        arr[j + 1] = key;
+    }
+}
+
+/// Algoritmo 3: Ordenamiento por Seleccion (NUEVO)
+void OrdenamientoSeleccion(int[] arr)
+{
+    int n = arr.Length;
+    
+    // Mover la 'frontera' del subarray ordenado uno por uno
+    for (int i = 0; i < n - 1; i++)
+    {
+        // Encontrar el elemento minimo en el array desordenado
+        // (desde 'i' hasta el final)
+        int min_idx = i;
+        for (int j = i + 1; j < n; j++)
+        {
+            if (arr[j] < arr[min_idx])
+            {
+                min_idx = j; // Encontramos un numero aun mas pequeno
+            }
+        }
+
+        // Intercambiar el elemento minimo encontrado (en 'min_idx')
+        // con el primer elemento de la seccion desordenada (en 'i')
+        int temp = arr[min_idx];
+        arr[min_idx] = arr[i];
+        arr[i] = temp;
+    }
+}
+
+// (Las funciones 'OrdenamientoRapido' y 'Particion' han sido eliminadas)
