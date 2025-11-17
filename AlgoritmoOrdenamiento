@@ -121,5 +121,3 @@ void OrdenamientoSeleccion(int[] arr)
         arr[i] = temp;
     }
 }
-
-// (Las funciones 'OrdenamientoRapido' y 'Particion' han sido eliminadas)
