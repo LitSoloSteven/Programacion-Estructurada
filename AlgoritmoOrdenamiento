@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics; // Necesario para Stopwatch
 
 // --- 1. CONFIGURACION ---
-// O(n^2) como Burbuja e Insercion son muy lentos.
 // 30000 puede tardar bastante, 20000 es un buen balance.
 int N = 20000; 
 int[] arrayOriginal = GenerarArrayAleatorio(N);
@@ -19,23 +18,23 @@ int[] arrayParaInsercion = (int[])arrayOriginal.Clone();
 int[] arrayParaQuickSort = (int[])arrayOriginal.Clone();
 
 
-// Algoritmo 1: Bubble Sort (Burbuja) - O(n^2)
+// Algoritmo 1: Bubble Sort (Burbuja)
 Stopwatch swBurbuja = Stopwatch.StartNew();
 OrdenamientoBurbuja(arrayParaBurbuja);
 swBurbuja.Stop();
-Console.WriteLine($"[O(n^2)]   Bubble Sort (Burbuja):   {swBurbuja.Elapsed.TotalMilliseconds:F4} ms");
+Console.WriteLine($"Bubble Sort (Burbuja):   {swBurbuja.Elapsed.TotalMilliseconds:F4} ms");
 
-// Algoritmo 2: Insertion Sort (Insercion) - O(n^2)
+// Algoritmo 2: Insertion Sort (Insercion)
 Stopwatch swInsercion = Stopwatch.StartNew();
 OrdenamientoInsercion(arrayParaInsercion);
 swInsercion.Stop();
-Console.WriteLine($"[O(n^2)]   Insertion Sort (Insercion): {swInsercion.Elapsed.TotalMilliseconds:F4} ms");
+Console.WriteLine($"Insertion Sort (Insercion): {swInsercion.Elapsed.TotalMilliseconds:F4} ms");
 
-// Algoritmo 3: QuickSort - O(n log n)
+// Algoritmo 3: QuickSort (Rapido)
 Stopwatch swQuickSort = Stopwatch.StartNew();
 OrdenamientoRapido(arrayParaQuickSort, 0, arrayParaQuickSort.Length - 1);
 swQuickSort.Stop();
-Console.WriteLine($"[O(n log n)] QuickSort (Rapido):      {swQuickSort.Elapsed.TotalMilliseconds:F4} ms");
+Console.WriteLine($"QuickSort (Rapido):      {swQuickSort.Elapsed.TotalMilliseconds:F4} ms");
 
 
 Console.WriteLine("\n==================================================");
@@ -47,83 +46,3 @@ Console.WriteLine("Pruebas finalizadas.");
 int[] GenerarArrayAleatorio(int tamano)
 {
     Random rand = new Random();
-    int[] arr = new int[tamano];
-    for (int i = 0; i < tamano; i++)
-    {
-        arr[i] = rand.Next(0, tamano * 10);
-    }
-    return arr;
-}
-
-/// Algoritmo 1: Ordenamiento Burbuja (O(n^2))
-void OrdenamientoBurbuja(int[] arr)
-{
-    int n = arr.Length;
-    for (int i = 0; i < n - 1; i++)
-    {
-        for (int j = 0; j < n - i - 1; j++)
-        {
-            if (arr[j] > arr[j + 1])
-            {
-                // Intercambio
-                int temp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
-            }
-        }
-    }
-}
-
-/// Algoritmo 2: Ordenamiento por Insercion (O(n^2))
-void OrdenamientoInsercion(int[] arr)
-{
-    int n = arr.Length;
-    for (int i = 1; i < n; ++i)
-    {
-        int key = arr[i];
-        int j = i - 1;
-
-        // Mueve los elementos de arr[0..i-1] que son
-        // mayores que key, a una posicion adelante
-        // de su posicion actual
-        while (j >= 0 && arr[j] > key)
-        {
-            arr[j + 1] = arr[j];
-            j = j - 1;
-        }
-        arr[j + 1] = key;
-    }
-}
-
-/// Algoritmo 3: Ordenamiento Rapido (QuickSort) (O(n log n))
-void OrdenamientoRapido(int[] arr, int low, int high)
-{
-    if (low < high)
-    {
-        int pi = Particion(arr, low, high);
-        OrdenamientoRapido(arr, low, pi - 1);
-        OrdenamientoRapido(arr, pi + 1, high);
-    }
-}
-
-int Particion(int[] arr, int low, int high)
-{
-    int pivot = arr[high];
-    int i = (low - 1);
-    for (int j = low; j < high; j++)
-    {
-        if (arr[j] < pivot)
-        {
-            i++;
-            // Intercambio
-            int temp = arr[i];
-            arr[i] = arr[j];
-            arr[j] = temp;
-        }
-    }
-    // Intercambio del pivote
-    int temp1 = arr[i + 1];
-    arr[i + 1] = arr[high];
-    arr[high] = temp1;
-    return i + 1;
-}
