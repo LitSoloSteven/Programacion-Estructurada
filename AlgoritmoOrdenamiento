@@ -95,7 +95,7 @@ void OrdenamientoInsercion(int[] arr)
     }
 }
 
-/// Algoritmo 3: Ordenamiento por Seleccion (NUEVO)
+/// Algoritmo 3: Ordenamiento por Seleccion 
 void OrdenamientoSeleccion(int[] arr)
 {
     int n = arr.Length;
