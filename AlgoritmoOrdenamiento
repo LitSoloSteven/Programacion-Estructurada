@@ -3,7 +3,7 @@ using System.Diagnostics; // stopwatch
 
 // --- 1. CONFIGURACION ---
 
-int N = 20000; 
+int N = 25000; 
 int[] arrayOriginal = GenerarArrayAleatorio(N);
 
 Console.WriteLine($"Comparacion de Algoritmos con N = {N} elementos.");
