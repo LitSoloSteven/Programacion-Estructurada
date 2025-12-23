@@ -1,0 +1,122 @@
+using System;
+
+class Nodo
+{
+    // Cada nodo guarda un nombre y las ramas izquierda y derecha
+    public string nombre;
+    public Nodo izquierda;
+    public Nodo derecha;
+
+    public Nodo(string nombre)
+    {
+        this.nombre = nombre;
+        izquierda = null;
+        derecha = null;
+    }
+}
+
+class ArbolNombres
+{
+    public Nodo raiz;
+
+    // Insertar un nombre en el árbol
+    public void Insertar(string nombre)
+    {
+        raiz = InsertarRec(raiz, nombre);
+    }
+
+    // Inserción recursiva (se usa Compare para comparar alfabéticamente)
+    private Nodo InsertarRec(Nodo nodo, string nombre)
+    {
+        if (nodo == null)
+            return new Nodo(nombre);
+
+        // Si el nombre va antes alfabéticamente, lo colocamos a la izquierda
+        if (string.Compare(nombre, nodo.nombre, true) < 0)
+            nodo.izquierda = InsertarRec(nodo.izquierda, nombre);
+        // Si va después, lo colocamos a la derecha
+        else if (string.Compare(nombre, nodo.nombre, true) > 0)
+            nodo.derecha = InsertarRec(nodo.derecha, nombre);
+
+        // Si es igual, simplemente no lo insertamos
+        return nodo;
+    }
+
+    // Buscar un nombre dentro del árbol
+    public bool Buscar(string nombre)
+    {
+        return BuscarRec(raiz, nombre);
+    }
+
+    private bool BuscarRec(Nodo nodo, string nombre)
+    {
+        if (nodo == null)
+            return false;
+
+        // Si lo encontramos, devolvemos true
+        if (nodo.nombre.Equals(nombre, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        // Si el nombre va antes, buscar a la izquierda
+        if (string.Compare(nombre, nodo.nombre, true) < 0)
+            return BuscarRec(nodo.izquierda, nombre);
+        // Si va después, buscar a la derecha
+        else
+            return BuscarRec(nodo.derecha, nombre);
+    }
+
+    // Mostrar nombres en orden alfabético (inorden)
+    public void MostrarInorden()
+    {
+        if (raiz == null)
+        {
+            Console.WriteLine("El árbol está vacío, no hay nombres que mostrar.");
+            return;
+        }
+
+        Console.WriteLine("Nombres en orden alfabético:");
+        Inorden(raiz);
+        Console.WriteLine();
+    }
+
+    private void Inorden(Nodo nodo)
+    {
+        if (nodo != null)
+        {
+            Inorden(nodo.izquierda);
+            Console.Write(nodo.nombre + " ");
+            Inorden(nodo.derecha);
+        }
+    }
+}
+
+class Programa
+{
+    static void Main()
+    {
+        ArbolNombres arbol = new ArbolNombres();
+
+        Console.WriteLine("=== Árbol de Nombres ===");
+
+        // Insertamos algunos nombres de ejemplo
+        arbol.Insertar("Carlos");
+        arbol.Insertar("Ana");
+        arbol.Insertar("Beatriz");
+        arbol.Insertar("David");
+        arbol.Insertar("Elena");
+
+        // Pedimos un nombre para buscar
+        Console.Write("\nIngrese un nombre para buscar: ");
+        string nombreBuscado = Console.ReadLine();
+
+        // Mostramos si el nombre se encuentra o no
+        if (arbol.Buscar(nombreBuscado))
+            Console.WriteLine($"El nombre {nombreBuscado} SÍ está en el árbol.");
+        else
+            Console.WriteLine($"El nombre {nombreBuscado} NO se encontró.");
+
+        // Mostrar recorrido alfabético
+        Console.WriteLine();
+        arbol.MostrarInorden();
+    }
+}

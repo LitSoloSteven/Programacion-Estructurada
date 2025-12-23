@@ -1,0 +1,298 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+
+// PROGRAMA PRINCIPAL Y MENÚ
+
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        ArbolNombres arbol = new ArbolNombres();
+        int opcion = 0;
+
+        Console.WriteLine("Programa de Árbol de Nombres Binario de Búsqueda ");
+        Console.WriteLine();
+
+        while (opcion != 6)
+        {
+            MostrarMenu();
+            if (int.TryParse(Console.ReadLine(), out opcion))
+            {
+                switch (opcion)
+                {
+                    case 1:
+                        InsertarVariosNombres(arbol);
+                        break;
+                    case 2:
+                        BuscarNombre(arbol);
+                        break;
+                    case 3:
+                        arbol.MostrarNombresOrdenados();
+                        break;
+                    case 4:
+                        ValidarVacio(arbol);
+                        break;
+                    case 5:
+                        arbol.MostrarEstructuraPiramidalConRamas();
+                        break;
+                    case 6:
+                        Console.WriteLine("Saliendo del programa. ¡Hasta luego!");
+                        break;
+                    default:
+                        Console.WriteLine("Opción no válida. Selecciona del 1 al 6.");
+                        break;
+                }
+            }
+            else
+            {
+                Console.WriteLine("Entrada no válida. Ingresa un número para la opción.");
+            }
+            Console.WriteLine();
+        }
+    }
+
+    private static void MostrarMenu()
+    {
+        Console.WriteLine("Selecciona una opción:");
+        Console.WriteLine("1. Insertar varios nombres");
+        Console.WriteLine("2. Buscar uno específico");
+        Console.WriteLine("3. Mostrar nombres ordenados");
+        Console.WriteLine("4. Mensaje si el árbol está vacío");
+        Console.WriteLine("5. Mostrar estructura piramidal con ramas");
+        Console.WriteLine("6. Salir");
+        Console.Write("Tu opción: ");
+    }
+
+    private static void InsertarVariosNombres(ArbolNombres arbol)
+    {
+        Console.Write("Ingresa nombres separados por espacios (ej: Ana Juan Maria): ");
+        string entrada = Console.ReadLine();
+        string[] nombresTexto = entrada.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (string nombre in nombresTexto)
+        {
+            if (!string.IsNullOrWhiteSpace(nombre))
+            {
+                arbol.Insertar(nombre);
+                Console.WriteLine($"Nombre '{nombre}' insertado.");
+            }
+            else
+            {
+                Console.WriteLine("Se omitió un nombre vacío.");
+            }
+        }
+    }
+
+    private static void BuscarNombre(ArbolNombres arbol)
+    {
+        if (arbol.EstaVacio())
+        {
+            Console.WriteLine("El árbol está vacío. Inserta nombres primero.");
+            return;
+        }
+
+        Console.Write("Ingresa el nombre a buscar: ");
+        string nombreBuscado = Console.ReadLine();
+
+        if (string.IsNullOrWhiteSpace(nombreBuscado))
+        {
+            Console.WriteLine("El nombre a buscar no puede estar vacío.");
+            return;
+        }
+
+        if (arbol.Buscar(nombreBuscado))
+            Console.WriteLine($"VALIDACIÓN: El nombre '{nombreBuscado}' SÍ se encontró en el árbol.");
+        else
+            Console.WriteLine($"VALIDACIÓN: El nombre '{nombreBuscado}' NO se encontró en el árbol.");
+    }
+
+    private static void ValidarVacio(ArbolNombres arbol)
+    {
+        Console.WriteLine(arbol.EstaVacio()
+            ? "VALIDACIÓN: El árbol está vacío."
+            : "VALIDACIÓN: El árbol NO está vacío.");
+    }
+}
+
+
+//  CLASE ÁRBOL BINARIO DE BÚSQUEDA DE NOMBRES
+
+public class ArbolNombres
+{
+    public Nodo Raiz;
+
+    public ArbolNombres()
+    {
+        Raiz = null;
+    }
+
+    public void Insertar(string nombre)
+    {
+        string nombreNormalizado = nombre.ToUpperInvariant();
+        Raiz = InsertarRecursivo(Raiz, nombreNormalizado);
+    }
+
+    public bool Buscar(string nombre)
+    {
+        string nombreNormalizado = nombre.ToUpperInvariant();
+        return BuscarRecursivo(Raiz, nombreNormalizado);
+    }
+
+    public void MostrarNombresOrdenados()
+    {
+        if (EstaVacio())
+        {
+            Console.WriteLine("El árbol está vacío. No hay nombres para mostrar.");
+            return;
+        }
+
+        Console.Write("Nombres en orden alfabético: ");
+        RecorridoInordenRecursivo(Raiz);
+        Console.WriteLine();
+    }
+
+    public bool EstaVacio() => Raiz == null;
+
+  
+    // VISUALIZACIÓN PIRAMIDAL REAL CON RAMAS
+  
+    public void MostrarEstructuraPiramidalConRamas()
+    {
+        if (Raiz == null)
+        {
+            Console.WriteLine("El árbol está vacío. No hay estructura para mostrar.");
+            return;
+        }
+
+        Console.WriteLine("\n Estructura Piramidal del Árbol ");
+
+        int altura = ObtenerAltura(Raiz);
+        Queue<Nodo> cola = new Queue<Nodo>();
+        cola.Enqueue(Raiz);
+
+        int nivel = 1;
+        while (nivel <= altura)
+        {
+            int cantidadNodos = cola.Count;
+            int espaciosEntre = (int)Math.Pow(2, altura - nivel + 1) - 1;
+            int espaciosInicio = (int)Math.Pow(2, altura - nivel) - 1;
+
+            // Espacios iniciales
+            Console.Write(new string(' ', espaciosInicio));
+
+            // Imprimir nombres
+            for (int i = 0; i < cantidadNodos; i++)
+            {
+                Nodo actual = cola.Dequeue();
+                if (actual != null)
+                {
+                    Console.Write(actual.Valor);
+                    cola.Enqueue(actual.Izquierdo);
+                    cola.Enqueue(actual.Derecho);
+                }
+                else
+                {
+                    Console.Write(" ");
+                    cola.Enqueue(null);
+                    cola.Enqueue(null);
+                }
+
+                if (i < cantidadNodos - 1)
+                    Console.Write(new string(' ', espaciosEntre));
+            }
+
+            Console.WriteLine();
+
+            // Dibujar las ramas (solo si hay más niveles)
+            if (nivel < altura)
+            {
+                int ramasEspacioInicio = espaciosInicio - 1;
+                if (ramasEspacioInicio < 0) ramasEspacioInicio = 0;
+
+                Console.Write(new string(' ', ramasEspacioInicio));
+
+                for (int i = 0; i < cantidadNodos; i++)
+                {
+                    Nodo actual = (i < cantidadNodos) ? cola.ElementAt(i * 2) : null; // izquierda
+                    Nodo siguiente = (i < cantidadNodos) ? cola.ElementAt(i * 2 + 1) : null; // derecha
+
+                    Console.Write(actual != null ? "/" : " ");
+                    Console.Write(new string(' ', espaciosEntre));
+                    Console.Write(siguiente != null ? "\\" : " ");
+
+                    if (i < cantidadNodos - 1)
+                        Console.Write(new string(' ', espaciosEntre - 1));
+                }
+                Console.WriteLine();
+            }
+
+            nivel++;
+        }
+    }
+
+    private int ObtenerAltura(Nodo nodo)
+    {
+        if (nodo == null) return 0;
+        return 1 + Math.Max(ObtenerAltura(nodo.Izquierdo), ObtenerAltura(nodo.Derecho));
+    }
+
+
+    // Implementaciones internas
+
+    private Nodo InsertarRecursivo(Nodo actual, string nombre)
+    {
+        if (actual == null)
+            return new Nodo(nombre);
+
+        int comparacion = String.Compare(nombre, actual.Valor, StringComparison.Ordinal);
+
+        if (comparacion < 0)
+            actual.Izquierdo = InsertarRecursivo(actual.Izquierdo, nombre);
+        else if (comparacion > 0)
+            actual.Derecho = InsertarRecursivo(actual.Derecho, nombre);
+        // Duplicados se ignoran
+
+        return actual;
+    }
+
+    private bool BuscarRecursivo(Nodo actual, string nombre)
+    {
+        if (actual == null)
+            return false;
+
+        int comparacion = String.Compare(nombre, actual.Valor, StringComparison.Ordinal);
+
+        if (comparacion == 0)
+            return true;
+        else if (comparacion < 0)
+            return BuscarRecursivo(actual.Izquierdo, nombre);
+        else
+            return BuscarRecursivo(actual.Derecho, nombre);
+    }
+
+    private void RecorridoInordenRecursivo(Nodo actual)
+    {
+        if (actual == null) return;
+        RecorridoInordenRecursivo(actual.Izquierdo);
+        Console.Write(actual.Valor + " ");
+        RecorridoInordenRecursivo(actual.Derecho);
+    }
+}
+
+
+//  CLASE NODO
+
+public class Nodo
+{
+    public string Valor;
+    public Nodo Izquierdo;
+    public Nodo Derecho;
+
+    public Nodo(string valor)
+    {
+        Valor = valor.ToUpperInvariant();
+        Izquierdo = Derecho = null;
+    }
+}

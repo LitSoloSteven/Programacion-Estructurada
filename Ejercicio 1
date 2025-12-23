@@ -1,0 +1,125 @@
+using System;
+
+class Nodo
+{
+    // Cada nodo tiene un valor y puede tener hijos a la izquierda y derecha
+    public int valor;
+    public Nodo izquierda;
+    public Nodo derecha;
+
+    public Nodo(int valor)
+    {
+        this.valor = valor;
+        izquierda = null;
+        derecha = null;
+    }
+}
+
+class Arbol
+{
+    public Nodo raiz; // Aquí guardamos el punto inicial del árbol
+
+    // Inserta un nuevo número en el árbol
+    public void Insertar(int valor)
+    {
+        raiz = InsertarRec(raiz, valor);
+    }
+
+    // Método recursivo para ubicar el valor en su lugar correcto
+    private Nodo InsertarRec(Nodo nodo, int valor)
+    {
+        // Si el nodo está vacío, creamos uno nuevo
+        if (nodo == null)
+            return new Nodo(valor);
+
+        // Si el valor es menor, va a la izquierda
+        if (valor < nodo.valor)
+            nodo.izquierda = InsertarRec(nodo.izquierda, valor);
+        // Si el valor es mayor, va a la derecha
+        else if (valor > nodo.valor)
+            nodo.derecha = InsertarRec(nodo.derecha, valor);
+
+        // Si es igual, no se inserta (para evitar duplicados)
+        return nodo;
+    }
+
+    // Busca un número dentro del árbol
+    public bool Buscar(int valor)
+    {
+        return BuscarRec(raiz, valor);
+    }
+
+    private bool BuscarRec(Nodo nodo, int valor)
+    {
+        // Si no hay nada, el número no existe
+        if (nodo == null)
+            return false;
+
+        // Si el número coincide, lo encontramos
+        if (nodo.valor == valor)
+            return true;
+
+        // Buscar hacia la izquierda o derecha según el valor
+        if (valor < nodo.valor)
+            return BuscarRec(nodo.izquierda, valor);
+        else
+            return BuscarRec(nodo.derecha, valor);
+    }
+
+    // Muestra los elementos en recorrido "inorden"
+    // (izquierda → raíz → derecha)
+    public void MostrarInorden()
+    {
+        if (raiz == null)
+        {
+            Console.WriteLine("El árbol está vacío, no hay nada que mostrar.");
+            return;
+        }
+
+        Console.WriteLine("Elementos del árbol en recorrido inorden:");
+        Inorden(raiz);
+        Console.WriteLine(); // Salto de línea al final
+    }
+
+    private void Inorden(Nodo nodo)
+    {
+        if (nodo != null)
+        {
+            Inorden(nodo.izquierda);  // Primero los menores
+            Console.Write(nodo.valor + " "); // Luego el valor actual
+            Inorden(nodo.derecha);   // Por último los mayores
+        }
+    }
+}
+
+class Programa
+{
+    static void Main()
+    {
+        Arbol arbol = new Arbol();
+
+        Console.WriteLine("=== Árbol Binario de Números ===");
+
+        // Insertamos algunos valores manualmente
+        arbol.Insertar(8);
+        arbol.Insertar(3);
+        arbol.Insertar(10);
+        arbol.Insertar(1);
+        arbol.Insertar(6);
+        arbol.Insertar(14);
+
+        // Pedimos al usuario un número para buscar
+        Console.Write("\nIngrese un número para buscar: ");
+        int num = int.Parse(Console.ReadLine());
+
+        // Mostramos el resultado de la búsqueda
+        if (arbol.Buscar(num))
+            Console.WriteLine($"El número {num} SÍ está en el árbol.");
+        else
+            Console.WriteLine($"El número {num} NO se encontró.");
+
+        // Finalmente mostramos el recorrido inorden
+        Console.WriteLine();
+        arbol.MostrarInorden();
+    }
+}
